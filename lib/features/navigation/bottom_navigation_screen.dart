@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:super_calendar/features/calendar/home_screen.dart';
+import 'package:super_calendar/features/navigation/components/nav_button.dart';
 import 'package:super_calendar/features/settings/settings_screen.dart';
 
 class BottomNavigationScreen extends StatefulWidget {
@@ -27,7 +28,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen>
       index = selectedIndex;
     });
     if (Platform.isIOS) {
-      HapticFeedback.lightImpact();
+      HapticFeedback.mediumImpact();
     }
   }
 
@@ -36,10 +37,11 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen>
     return Scaffold(
       body: screens[index],
       bottomNavigationBar: BottomAppBar(
+        height: 55,
         color: Colors.transparent,
         shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
-        padding: const EdgeInsets.only(top: 25, left: 20, right: 20),
+        padding: const EdgeInsets.only(left: 20, right: 20),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -72,32 +74,6 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen>
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class NavButton extends StatelessWidget {
-  final IconData icon;
-  final Function onTap;
-  final bool isSelected;
-  const NavButton(
-      {super.key,
-      required this.onTap,
-      required this.isSelected,
-      required this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => onTap(),
-      child: Container(
-        color: Colors.transparent,
-        height: double.maxFinite,
-        child: Icon(
-          icon,
-          color: isSelected ? Theme.of(context).primaryColor : Colors.black,
         ),
       ),
     );
