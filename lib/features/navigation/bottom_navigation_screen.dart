@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 import 'package:super_calendar/features/calendar/home_screen.dart';
+import 'package:super_calendar/features/calendar/show_agenda_provider.dart';
 import 'package:super_calendar/features/navigation/components/nav_button.dart';
 import 'package:super_calendar/features/settings/settings_screen.dart';
 
@@ -16,7 +18,7 @@ class BottomNavigationScreen extends StatefulWidget {
 
 class _BottomNavigationScreenState extends State<BottomNavigationScreen>
     with SingleTickerProviderStateMixin {
-  List<Widget> screens = [
+  late List<Widget> screens = [
     const HomeScreen(),
     const SettingsScreen(),
   ];
@@ -70,6 +72,22 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen>
                   icon: Iconsax.setting,
                   onTap: () => onNavTap(1),
                   isSelected: index == 1,
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    if (Platform.isIOS) {
+                      HapticFeedback.mediumImpact();
+                    }
+                    context.read<ShowAgendaProvider>().setShowAgenda();
+                  },
+                  child: Container(
+                    color: Colors.transparent,
+                    child: Icon(context.watch<ShowAgendaProvider>().showAgenda
+                        ? Iconsax.arrow_circle_down
+                        : Iconsax.arrow_circle_up),
+                  ),
                 ),
               ),
             ],
