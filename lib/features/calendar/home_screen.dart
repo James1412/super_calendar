@@ -228,26 +228,43 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (showAgenda)
                     Column(
                       children: [
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          height: 40,
-                          child: GestureDetector(
-                            onTap: () {
-                              if (Platform.isIOS) {
-                                HapticFeedback.lightImpact();
-                              }
-                              setState(() {
-                                showAgenda = !showAgenda;
-                              });
-                            },
-                            child: const Align(
-                              alignment: Alignment.centerRight,
-                              child: Icon(
-                                Iconsax.close_circle,
-                                size: 25,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  _calendarController.displayDate =
+                                      DateTime.now();
+                                },
+                                child: Text(
+                                  "Go to today",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).primaryColor),
+                                ),
                               ),
                             ),
-                          ),
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              height: 40,
+                              child: GestureDetector(
+                                onTap: () {
+                                  if (Platform.isIOS) {
+                                    HapticFeedback.lightImpact();
+                                  }
+                                  setState(() {
+                                    showAgenda = !showAgenda;
+                                  });
+                                },
+                                child: const Icon(
+                                  Iconsax.close_circle,
+                                  size: 25,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.25,

@@ -19,10 +19,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Settings"),
+        title: const Text(
+          "Settings",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       body: Column(
         children: [
+          InkWell(
+            onTap: () {},
+            child: const ListTile(
+              title: Text("How to use?"),
+            ),
+          ),
           SwitchListTile(
             activeColor: Theme.of(context).primaryColor,
             inactiveThumbColor: Colors.grey,
