@@ -6,6 +6,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:super_calendar/features/calendar/home_screen.dart';
 import 'package:super_calendar/features/navigation/components/nav_button.dart';
 import 'package:super_calendar/features/settings/settings_screen.dart';
+import 'package:super_calendar/utils.dart';
 
 class BottomNavigationScreen extends StatefulWidget {
   const BottomNavigationScreen({super.key});
@@ -44,7 +45,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen>
         padding: const EdgeInsets.only(left: 20, right: 20),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDarkMode(context) ? const Color(0xff121212) : Colors.white,
             boxShadow: [
               BoxShadow(
                 color: Colors.grey.withOpacity(0.5),
@@ -53,7 +54,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen>
                 offset: const Offset(0, 2),
               ),
             ],
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(15),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,

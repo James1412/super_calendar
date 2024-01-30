@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:super_calendar/utils.dart';
 
 class NavButton extends StatelessWidget {
   final IconData icon;
@@ -19,7 +20,11 @@ class NavButton extends StatelessWidget {
         height: double.maxFinite,
         child: Icon(
           icon,
-          color: isSelected ? Theme.of(context).primaryColor : Colors.black,
+          color: isSelected
+              ? Theme.of(context).primaryColor
+              : isDarkMode(context)
+                  ? Colors.white
+                  : Colors.black,
         ),
       ),
     );
