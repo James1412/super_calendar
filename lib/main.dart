@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:super_calendar/features/authentication/more_feature_provider.dart';
+import 'package:super_calendar/features/calendar/view_models/data_source_vm.dart';
 import 'package:super_calendar/features/darkmode/dark_mode_provider.dart';
 import 'package:super_calendar/features/navigation/bottom_navigation_screen.dart';
 import 'package:super_calendar/utils.dart';
@@ -15,6 +16,9 @@ void main() {
         ),
         ChangeNotifierProvider(
           create: (context) => DarkModeProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => DataSourceViewModel(),
         ),
       ],
       child: const SuperCalendarApp(),

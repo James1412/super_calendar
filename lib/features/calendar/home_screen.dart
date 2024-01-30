@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:super_calendar/features/authentication/more_feature_provider.dart';
 import 'package:super_calendar/features/calendar/components/calendar_datasource.dart';
 import 'package:super_calendar/features/calendar/components/event_model.dart';
+import 'package:super_calendar/features/calendar/view_models/data_source_vm.dart';
 import 'package:super_calendar/utils.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -25,28 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  final List<Meeting> meetings = <Meeting>[];
-
-  List<Meeting> dataSource = [
-    Meeting(
-        'Conference',
-        getOnlyDate(DateTime.now()),
-        getOnlyDate(DateTime.now()).add(const Duration(hours: 2)),
-        const Color(0xFF0F8644),
-        false),
-    Meeting(
-        'Conference',
-        getOnlyDate(DateTime.now()),
-        getOnlyDate(DateTime.now()).add(const Duration(hours: 2)),
-        const Color(0xFF0F8644),
-        false),
-    Meeting(
-        'Conference',
-        getOnlyDate(DateTime.now()),
-        getOnlyDate(DateTime.now()).add(const Duration(hours: 2)),
-        const Color(0xFF0F8644),
-        false),
-  ];
+  final List<Event> meetings = <Event>[];
 
   Color? dateTextColor(DateTime datetime, bool moreFeatures) {
     final bool isSaturday = datetime.weekday == 6;
@@ -222,7 +202,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               ? Colors.white70
                               : Colors.black,
                       onTap: onTap,
-                      dataSource: MeetingDataSource(dataSource),
+                      dataSource: MeetingDataSource(
+                        context.watch<DataSourceViewModel>().dataSource,
+                      ),
                     ),
                   ),
                   if (showAgenda)
@@ -237,12 +219,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                 onTap: () {
                                   _calendarController.displayDate =
                                       DateTime.now();
+                                  setState(() {
+                                    selectedDate = DateTime.now();
+                                  });
                                 },
                                 child: Text(
                                   "Go to today",
                                   style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).primaryColor),
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
                                 ),
                               ),
                             ),
