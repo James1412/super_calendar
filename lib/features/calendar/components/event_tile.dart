@@ -1,3 +1,5 @@
+import 'package:day_night_time_picker/day_night_time_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -66,12 +68,60 @@ class EventTile extends StatelessWidget {
                   ),
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Text(
-                  event.isAllDay
-                      ? "all-day"
-                      : "${getOnlyTime(event.from)} - ${getOnlyTime(event.to)}",
+              InkWell(
+                onTap: () {
+                  showCupertinoDialog(
+                    barrierDismissible: true,
+                    context: context,
+                    builder: (context) => Dialog(
+                      backgroundColor: Colors.white,
+                      surfaceTintColor: Colors.white,
+                      shape: const BeveledRectangleBorder(),
+                      insetPadding: const EdgeInsets.symmetric(vertical: 200),
+                      child: Column(
+                        children: [
+                          const Text("Change time"),
+                          GestureDetector(
+                            onTap: () {
+                              showCupertinoModalPopup(
+                                context: context,
+                                builder: (context) => Container(
+                                  height: 216,
+                                  padding: const EdgeInsets.only(top: 6.0),
+                                  // The Bottom margin is provided to align the popup above the system
+                                  // navigation bar.
+                                  margin: EdgeInsets.only(
+                                    bottom: MediaQuery.of(context)
+                                        .viewInsets
+                                        .bottom,
+                                  ),
+                                  // Provide a background color for the popup.
+                                  color: CupertinoColors.systemBackground
+                                      .resolveFrom(context),
+                                  // Use a SafeArea widget to avoid system overlaps.
+                                  child: SafeArea(
+                                    top: false,
+                                    child: CupertinoDatePicker(
+                                      onDateTimeChanged: (value) {},
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: const Text("Chagne"),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: Text(
+                    event.isAllDay
+                        ? "all-day"
+                        : "${getOnlyTime(event.from)} - ${getOnlyTime(event.to)}",
+                  ),
                 ),
               ),
             ],

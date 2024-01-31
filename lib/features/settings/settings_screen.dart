@@ -40,6 +40,7 @@ class _SettingsScreenState extends State<SettingsScreen>
 
   @override
   Widget build(BuildContext context) {
+    bool moreFeature = context.watch<MoreFeatures>().moreFeatures;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -49,12 +50,6 @@ class _SettingsScreenState extends State<SettingsScreen>
       ),
       body: Column(
         children: [
-          InkWell(
-            onTap: () {},
-            child: const ListTile(
-              title: Text("How to use the app❓"),
-            ),
-          ),
           SwitchListTile(
             activeColor: Theme.of(context).primaryColor,
             inactiveThumbColor: Colors.grey,
@@ -109,7 +104,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                     ),
                   ],
                 ),
-                value: context.watch<MoreFeatures>().moreFeatures,
+                value: moreFeature,
                 onChanged: (value) async {
                   if (Platform.isIOS) {
                     HapticFeedback.selectionClick();
