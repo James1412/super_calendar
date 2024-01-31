@@ -6,6 +6,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:super_calendar/features/calendar/components/text_magnifier.dart';
+import 'package:super_calendar/features/calendar/components/today_button.dart';
 import 'package:super_calendar/features/settings/view_models/more_feature_provider.dart';
 import 'package:super_calendar/features/calendar/models/calendar_datasource.dart';
 import 'package:super_calendar/features/calendar/components/appointment_tile.dart';
@@ -90,6 +91,44 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void onTap(CalendarTapDetails calendarTapDetails) {
+    if (calendarTapDetails.targetElement == CalendarElement.header) {
+      showModalBottomSheet(
+          backgroundColor: Colors.white,
+          context: context,
+          builder: (context) => SizedBox(
+                height: MediaQuery.of(context).size.height * 0.3,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          _calendarController.displayDate = DateTime.now();
+                          _calendarController.selectedDate = DateTime.now();
+                          setState(() {
+                            selectedDate = DateTime.now();
+                          });
+                          Navigator.pop(context);
+                        },
+                        child: const TodayButton(),
+                      ),
+                    ),
+                    Expanded(
+                      child: CupertinoDatePicker(
+                        onDateTimeChanged: (value) {
+                          _calendarController.displayDate = value;
+                          setState(() {});
+                        },
+                        mode: CupertinoDatePickerMode.monthYear,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  ],
+                ),
+              ));
+    }
     if (calendarTapDetails.targetElement == CalendarElement.calendarCell) {
       if (Platform.isIOS) {
         HapticFeedback.lightImpact();
@@ -239,7 +278,6 @@ class _HomeScreenState extends State<HomeScreen> {
               textStyle: TextStyle(color: Theme.of(context).primaryColor),
               onPressed: () {
                 String? repeat;
-
                 switch (dropDownValue) {
                   case ('day'):
                     repeat = SfCalendar.generateRRule(
@@ -252,9 +290,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     repeat =
                         'FREQ=WEEKLY;BYDAY=${getDay(calendarLongPressDetails.date!)};INTERVAL=1';
                   case ('month'):
-                    repeat = 'FREQ=MONTHLY;INTERVAL=1';
+                    repeat =
+                        'FREQ=MONTHLY;BYMONTHDAY=${calendarLongPressDetails.date!.day};INTERVAL=1';
                   case ('year'):
-                    repeat = 'FREQ=YEARLY;INTERVAL=1';
+                    repeat =
+                        'FREQ=YEARLY;BYMONTHDAY=${calendarLongPressDetails.date!.day};BYMONTH=${calendarLongPressDetails.date!.month};INTERVAL=1';
                   default:
                     repeat = null;
                 }
@@ -311,7 +351,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             : Colors.black),
                   ),
                   controller: _calendarController,
-                  showDatePickerButton: moreFeatures ? true : false,
                   showNavigationArrow: moreFeatures ? true : false,
                   selectionDecoration:
                       const BoxDecoration(color: Colors.transparent),
