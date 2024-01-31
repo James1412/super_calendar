@@ -220,6 +220,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Column getAgenda(BuildContext context) {
     bool moreFeature = context.watch<MoreFeatures>().moreFeatures;
     bool notToday = getOnlyDate(selectedDate) != getOnlyDate(DateTime.now());
+    List eventsOnDate = context
+        .watch<DataSourceViewModel>()
+        .dataSource
+        .where((element) =>
+            (selectedDate.isBefore(element.to) ||
+                selectedDate.isAtSameMomentAs(element.to)) &&
+            (selectedDate.isAfter(element.from) ||
+                selectedDate.isAtSameMomentAs(element.from)))
+        .toList();
     return Column(
       children: [
         Row(
@@ -301,17 +310,11 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: ListView(
-                    children: [
-                      for (Event event in Provider.of<DataSourceViewModel>(
-                              context,
-                              listen: false)
-                          .dataSource)
-                        EventTile(
-                          event: event,
-                        )
-                    ],
-                  ),
+                  child: ListView.builder(
+                      itemCount: eventsOnDate.length,
+                      itemBuilder: (context, index) => EventTile(
+                            event: eventsOnDate[index],
+                          )),
                 ),
               ],
             ),

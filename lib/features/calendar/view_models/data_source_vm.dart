@@ -14,7 +14,7 @@ class DataSourceViewModel extends ChangeNotifier {
     Event(
         'Conference',
         getOnlyDate(DateTime.now()),
-        getOnlyDate(DateTime.now()).add(const Duration(hours: 2)),
+        getOnlyDate(DateTime.now()).add(const Duration(hours: 50)),
         const Color(0xFF0F8644),
         false),
     Event(
