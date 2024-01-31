@@ -79,6 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> onViewChanged(ViewChangedDetails viewChangedDetails) async {
+    //TODO: Make it better
     if (_calendarController.view != CalendarView.month) {
       showAgenda = false;
       await Future.delayed(Duration.zero, () async {
