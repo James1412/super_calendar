@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
-import 'package:super_calendar/features/authentication/more_feature_provider.dart';
+import 'package:super_calendar/features/settings/view_models/more_feature_provider.dart';
 import 'package:super_calendar/features/calendar/home_screen.dart';
 import 'package:super_calendar/features/manage/manage_screen.dart';
 import 'package:super_calendar/features/navigation/components/nav_button.dart';

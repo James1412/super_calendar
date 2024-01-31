@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:super_calendar/features/authentication/more_feature_provider.dart';
+import 'package:super_calendar/features/settings/view_models/more_feature_provider.dart';
 import 'package:super_calendar/features/calendar/components/calendar_datasource.dart';
 import 'package:super_calendar/features/calendar/components/event_model.dart';
 import 'package:super_calendar/features/calendar/components/event_tile.dart';
@@ -67,11 +67,13 @@ class _HomeScreenState extends State<HomeScreen> {
           getOnlyDate(_calendarController.selectedDate!);
     }
     return MonthCell(
-        isToday: isToday,
-        isSelectedDate: isSelectedDate,
-        details: details,
-        dateTextColor: dateTextColor,
-        moreFeatures: moreFeatures);
+      isToday: isToday,
+      isSelectedDate: isSelectedDate,
+      details: details,
+      dateTextColor: dateTextColor,
+      moreFeatures: moreFeatures,
+      showAgenda: showAgenda,
+    );
   }
 
   Future<void> onViewChanged(ViewChangedDetails viewChangedDetails) async {

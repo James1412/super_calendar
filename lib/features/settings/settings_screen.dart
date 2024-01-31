@@ -3,8 +3,9 @@ import 'package:animated_emoji/animated_emoji.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:super_calendar/features/authentication/more_feature_provider.dart';
-import 'package:super_calendar/features/darkmode/dark_mode_provider.dart';
+import 'package:super_calendar/features/settings/view_models/more_feature_provider.dart';
+import 'package:super_calendar/features/settings/view_models/dark_mode_provider.dart';
+import 'package:super_calendar/features/settings/view_models/lunar_vm.dart';
 import 'package:super_calendar/utils.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -84,17 +85,16 @@ class _SettingsScreenState extends State<SettingsScreen>
               }
             },
           ),
-          InkWell(
-            onTap: () {},
-            child: SwitchListTile(
-              activeColor: Theme.of(context).primaryColor,
-              inactiveThumbColor: Colors.grey,
-              inactiveTrackColor: Colors.grey.shade300,
-              trackOutlineColor: MaterialStateProperty.all(Colors.transparent),
-              value: false,
-              onChanged: (value) {},
-              title: const Text("Show Lunar Calendar 📅"),
-            ),
+          SwitchListTile(
+            activeColor: Theme.of(context).primaryColor,
+            inactiveThumbColor: Colors.grey,
+            inactiveTrackColor: Colors.grey.shade300,
+            trackOutlineColor: MaterialStateProperty.all(Colors.transparent),
+            value: context.watch<LunarViewModel>().showLunarDate,
+            onChanged: (value) {
+              context.read<LunarViewModel>().setShowLunarDate(value);
+            },
+            title: const Text("Show Lunar Calendar 📅"),
           ),
           AnimatedBuilder(
             animation: _animationController,

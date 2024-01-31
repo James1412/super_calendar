@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:super_calendar/features/calendar/components/event_model.dart';
-import 'package:super_calendar/features/darkmode/dark_mode_provider.dart';
+import 'package:super_calendar/features/settings/view_models/dark_mode_provider.dart';
 
 DateTime getOnlyDate(DateTime date) {
   return DateTime(date.year, date.month, date.day);
