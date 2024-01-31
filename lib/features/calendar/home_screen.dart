@@ -29,11 +29,10 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  Color? dateTextColor(DateTime datetime, bool moreFeatures) {
+  Color? dateTextColor(DateTime datetime, bool moreFeatures, DateTime midDate) {
     final bool isSaturday = datetime.weekday == 6;
     final bool isSunday = datetime.weekday == 7;
-    final bool currentMonth =
-        (_calendarController.displayDate!.month == datetime.month);
+    final bool currentMonth = (datetime.month == midDate.month);
     if (!moreFeatures) {
       if (isSaturday) {
         return Colors.blue;
@@ -59,6 +58,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget monthCellBuilder(
       BuildContext context, MonthCellDetails details, bool moreFeatures) {
+    var mid = details.visibleDates.length ~/ 2.toInt();
+    var midDate = details.visibleDates[0].add(Duration(days: mid));
     final bool isToday =
         getOnlyDate(details.date) == getOnlyDate(DateTime.now());
     bool isSelectedDate = false;
@@ -71,6 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
       isSelectedDate: isSelectedDate,
       details: details,
       dateTextColor: dateTextColor,
+      midDate: midDate,
       moreFeatures: moreFeatures,
       showAgenda: showAgenda,
     );
@@ -80,14 +82,6 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_calendarController.view != CalendarView.month) {
       showAgenda = false;
       await Future.delayed(Duration.zero, () async {
-        setState(() {});
-      });
-    }
-    if (!mounted) return;
-    if (Provider.of<MoreFeatures>(context, listen: false).moreFeatures &&
-        _calendarController.view == CalendarView.month) {
-      _calendarController.displayDate = viewChangedDetails.visibleDates[15];
-      await Future.delayed(const Duration(microseconds: 1), () async {
         setState(() {});
       });
     }

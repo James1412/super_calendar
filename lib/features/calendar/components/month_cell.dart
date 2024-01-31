@@ -12,8 +12,10 @@ class MonthCell extends StatelessWidget {
   final Function dateTextColor;
   final bool moreFeatures;
   final bool showAgenda;
+  final midDate;
   const MonthCell(
       {super.key,
+      required this.midDate,
       required this.isToday,
       required this.isSelectedDate,
       required this.details,
@@ -53,7 +55,7 @@ class MonthCell extends StatelessWidget {
                 fontWeight: FontWeight.w900,
                 color: isToday
                     ? Colors.white
-                    : dateTextColor(details.date, moreFeatures),
+                    : dateTextColor(details.date, moreFeatures, midDate),
               ),
             ),
           ),
