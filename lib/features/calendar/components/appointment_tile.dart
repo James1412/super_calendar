@@ -2,12 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:super_calendar/features/calendar/components/event_model.dart';
 import 'package:super_calendar/utils.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-class EventTile extends StatelessWidget {
-  final Event event;
-  const EventTile({super.key, required this.event});
+class AppointmentTile extends StatelessWidget {
+  final Appointment event;
+  const AppointmentTile({super.key, required this.event});
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +45,7 @@ class EventTile extends StatelessWidget {
                     ),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: event.background,
+                        color: event.color,
                         borderRadius: BorderRadius.circular(5),
                       ),
                       width: 5,
@@ -55,7 +55,7 @@ class EventTile extends StatelessWidget {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.4,
                     child: Text(
-                      event.eventName,
+                      event.subject,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -87,17 +87,13 @@ class EventTile extends StatelessWidget {
                                 builder: (context) => Container(
                                   height: 216,
                                   padding: const EdgeInsets.only(top: 6.0),
-                                  // The Bottom margin is provided to align the popup above the system
-                                  // navigation bar.
                                   margin: EdgeInsets.only(
                                     bottom: MediaQuery.of(context)
                                         .viewInsets
                                         .bottom,
                                   ),
-                                  // Provide a background color for the popup.
                                   color: CupertinoColors.systemBackground
                                       .resolveFrom(context),
-                                  // Use a SafeArea widget to avoid system overlaps.
                                   child: SafeArea(
                                     top: false,
                                     child: CupertinoDatePicker(
@@ -107,7 +103,7 @@ class EventTile extends StatelessWidget {
                                 ),
                               );
                             },
-                            child: const Text("Chagne"),
+                            child: const Text("Change"),
                           ),
                         ],
                       ),
@@ -115,11 +111,15 @@ class EventTile extends StatelessWidget {
                   );
                 },
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  padding: const EdgeInsets.only(right: 15),
                   child: Text(
                     event.isAllDay
                         ? "all-day"
-                        : "${getOnlyTime(event.from)} - ${getOnlyTime(event.to)}",
+                        : getOnlyTime(event.startTime) ==
+                                getOnlyTime(event.endTime)
+                            ? getOnlyTime(event.startTime)
+                            : "${getOnlyTime(event.startTime)} - ${getOnlyTime(event.endTime)}",
+                    style: const TextStyle(fontSize: 12),
                   ),
                 ),
               ),

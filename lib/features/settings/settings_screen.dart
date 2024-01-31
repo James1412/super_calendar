@@ -51,6 +51,48 @@ class _SettingsScreenState extends State<SettingsScreen>
       ),
       body: Column(
         children: [
+          AnimatedBuilder(
+            animation: _animationController,
+            builder: (context, child) => ScaleTransition(
+              scale: scale,
+              child: SwitchListTile(
+                activeColor: Theme.of(context).primaryColor,
+                inactiveThumbColor: Colors.grey,
+                inactiveTrackColor: Colors.grey.shade300,
+                trackOutlineColor:
+                    MaterialStateProperty.all(Colors.transparent),
+                title: Row(
+                  children: [
+                    const Text("Enable feature rich mode "),
+                    AnimatedEmoji(
+                      AnimatedEmojis.muscle,
+                      size: 20,
+                      animate: animateMuscle,
+                    ),
+                  ],
+                ),
+                value: moreFeature,
+                onChanged: (value) async {
+                  if (Platform.isIOS) {
+                    HapticFeedback.selectionClick();
+                  }
+                  context.read<MoreFeatures>().setMoreFeatures(value);
+                  if (Provider.of<MoreFeatures>(context, listen: false)
+                      .moreFeatures) {
+                    await _animationController.forward();
+                    await _animationController.reverse();
+                    setState(() {
+                      animateMuscle = true;
+                    });
+                  } else {
+                    setState(() {
+                      animateMuscle = false;
+                    });
+                  }
+                },
+              ),
+            ),
+          ),
           SwitchListTile(
             activeColor: Theme.of(context).primaryColor,
             inactiveThumbColor: Colors.grey,
@@ -95,48 +137,6 @@ class _SettingsScreenState extends State<SettingsScreen>
               context.read<LunarViewModel>().setShowLunarDate(value);
             },
             title: const Text("Show Lunar Calendar 📅"),
-          ),
-          AnimatedBuilder(
-            animation: _animationController,
-            builder: (context, child) => ScaleTransition(
-              scale: scale,
-              child: SwitchListTile(
-                activeColor: Theme.of(context).primaryColor,
-                inactiveThumbColor: Colors.grey,
-                inactiveTrackColor: Colors.grey.shade300,
-                trackOutlineColor:
-                    MaterialStateProperty.all(Colors.transparent),
-                title: Row(
-                  children: [
-                    const Text("Enable feature rich mode "),
-                    AnimatedEmoji(
-                      AnimatedEmojis.muscle,
-                      size: 20,
-                      animate: animateMuscle,
-                    ),
-                  ],
-                ),
-                value: moreFeature,
-                onChanged: (value) async {
-                  if (Platform.isIOS) {
-                    HapticFeedback.selectionClick();
-                  }
-                  context.read<MoreFeatures>().setMoreFeatures(value);
-                  if (Provider.of<MoreFeatures>(context, listen: false)
-                      .moreFeatures) {
-                    await _animationController.forward();
-                    await _animationController.reverse();
-                    setState(() {
-                      animateMuscle = true;
-                    });
-                  } else {
-                    setState(() {
-                      animateMuscle = false;
-                    });
-                  }
-                },
-              ),
-            ),
           ),
           InkWell(
             onTap: () {},

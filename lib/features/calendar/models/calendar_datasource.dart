@@ -1,10 +1,8 @@
 import 'dart:ui';
-
-import 'package:super_calendar/features/calendar/components/event_model.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class MeetingDataSource extends CalendarDataSource {
-  MeetingDataSource(List<Event> source) {
+  MeetingDataSource(List<Appointment> source) {
     appointments = source;
   }
 
@@ -31,5 +29,15 @@ class MeetingDataSource extends CalendarDataSource {
   @override
   bool isAllDay(int index) {
     return appointments![index].isAllDay;
+  }
+
+  @override
+  String getRecurrenceRule(int index) {
+    return appointments![index].recurrenceRule;
+  }
+
+  @override
+  List<DateTime> getRecurrenceExceptionDates(int index) {
+    return appointments![index].exceptionDates;
   }
 }

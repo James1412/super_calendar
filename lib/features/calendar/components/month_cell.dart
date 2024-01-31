@@ -12,7 +12,7 @@ class MonthCell extends StatelessWidget {
   final Function dateTextColor;
   final bool moreFeatures;
   final bool showAgenda;
-  final midDate;
+  final DateTime midDate;
   const MonthCell(
       {super.key,
       required this.midDate,
@@ -27,13 +27,9 @@ class MonthCell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.topCenter,
-      child: Column(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          if (showAgenda && context.watch<LunarViewModel>().showLunarDate)
-            Text(
-              Lunar.fromSolar(Solar.fromDate(details.date)).getDay().toString(),
-              style: const TextStyle(fontSize: 10),
-            ),
           Container(
             padding: EdgeInsets.only(
                 top: MediaQuery.of(context).size.height * 0.003),
@@ -59,6 +55,11 @@ class MonthCell extends StatelessWidget {
               ),
             ),
           ),
+          if (context.watch<LunarViewModel>().showLunarDate)
+            Text(
+              Lunar.fromSolar(Solar.fromDate(details.date)).getDay().toString(),
+              style: const TextStyle(fontSize: 10, color: Colors.grey),
+            ),
         ],
       ),
     );

@@ -41,13 +41,14 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen>
   Widget build(BuildContext context) {
     bool moreFeature = context.watch<MoreFeatures>().moreFeatures;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: screens[index],
       bottomNavigationBar: BottomAppBar(
         height: 55,
         color: Colors.transparent,
         shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
-        padding: const EdgeInsets.only(left: 20, right: 20),
+        padding: const EdgeInsets.only(left: 20, right: 20, top: 5),
         child: Container(
           decoration: BoxDecoration(
             color: isDarkMode(context) ? const Color(0xff121212) : Colors.white,

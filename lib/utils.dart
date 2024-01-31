@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:super_calendar/features/calendar/components/event_model.dart';
 import 'package:super_calendar/features/settings/view_models/dark_mode_provider.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 DateTime getOnlyDate(DateTime date) {
   return DateTime(date.year, date.month, date.day);
@@ -19,19 +19,19 @@ String getDayName(DateTime dateTime) {
 String getDay(DateTime date) {
   switch (date.weekday) {
     case (1):
-      return "MON";
+      return "MO";
     case (2):
-      return "TUE";
+      return "TU";
     case (3):
-      return "WED";
+      return "WE";
     case (4):
-      return "THU";
+      return "TH";
     case (5):
-      return "FRI";
+      return "FR";
     case (6):
-      return "SAT";
+      return "SA";
     default:
-      return "SUN";
+      return "SU";
   }
 }
 
@@ -39,17 +39,17 @@ bool isDarkMode(BuildContext context) {
   return context.watch<DarkModeProvider>().isDarkMode;
 }
 
-List<Event> filterEventsByDate(
-    DateTime selectedDate, List<Event> dataSource, bool isAllDay) {
+List<Appointment> filterEventsByDate(
+    DateTime selectedDate, List<Appointment> dataSource, bool isAllDay) {
   return dataSource
       .where((element) =>
-          (selectedDate.isBefore(element.to) ||
+          (selectedDate.isBefore(element.endTime) ||
               getOnlyDate(selectedDate)
-                  .isAtSameMomentAs(getOnlyDate(element.to))) &&
-          (selectedDate.isAfter(element.from) ||
+                  .isAtSameMomentAs(getOnlyDate(element.endTime))) &&
+          (selectedDate.isAfter(element.startTime) ||
               getOnlyDate(selectedDate)
-                  .isAtSameMomentAs(getOnlyDate(element.from))) &&
+                  .isAtSameMomentAs(getOnlyDate(element.startTime))) &&
           (isAllDay ? element.isAllDay : !element.isAllDay))
       .toList()
-    ..sort((a, b) => a.from.compareTo(b.from));
+    ..sort((a, b) => a.startTime.compareTo(b.startTime));
 }
