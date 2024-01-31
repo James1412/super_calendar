@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:super_calendar/features/authentication/more_feature_provider.dart';
 import 'package:super_calendar/features/calendar/components/calendar_datasource.dart';
 import 'package:super_calendar/features/calendar/components/event_model.dart';
+import 'package:super_calendar/features/calendar/components/event_tile.dart';
 import 'package:super_calendar/features/calendar/view_models/data_source_vm.dart';
 import 'package:super_calendar/utils.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -239,38 +240,39 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                GestureDetector(
-                  onTap: () {
-                    _calendarController.displayDate = DateTime.now();
-                    _calendarController.selectedDate = DateTime.now();
-                    setState(() {
-                      selectedDate = DateTime.now();
-                    });
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 400),
-                    width: 90,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: notToday
-                          ? Theme.of(context).primaryColor
-                          : Colors.transparent,
-                    ),
-                    child: notToday
-                        ? const Center(
-                            child: Text(
-                              "Go to today",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                fontSize: 13,
+                if (moreFeature)
+                  GestureDetector(
+                    onTap: () {
+                      _calendarController.displayDate = DateTime.now();
+                      _calendarController.selectedDate = DateTime.now();
+                      setState(() {
+                        selectedDate = DateTime.now();
+                      });
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 400),
+                      width: 90,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: notToday
+                            ? Theme.of(context).primaryColor
+                            : Colors.transparent,
+                      ),
+                      child: notToday
+                          ? const Center(
+                              child: Text(
+                                "Go to today",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                ),
                               ),
-                            ),
-                          )
-                        : null,
+                            )
+                          : null,
+                    ),
                   ),
-                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: GestureDetector(
@@ -293,7 +295,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.25,
+          height: MediaQuery.of(context).size.height * 0.3,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Row(
@@ -305,69 +307,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               context,
                               listen: false)
                           .dataSource)
-                        Align(
-                          alignment: Alignment.center,
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(
-                              vertical: 5,
-                            ),
-                            width: double.maxFinite,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Center(
-                                child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 10,
-                                        horizontal: 15,
-                                      ),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: event.background,
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                        width: 5,
-                                        height: double.maxFinite,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.4,
-                                      child: Text(
-                                        event.eventName,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: isDarkMode(context)
-                                              ? Colors.white
-                                              : Colors.black,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15),
-                                  child: Text(
-                                    event.isAllDay
-                                        ? "all-day"
-                                        : "${getOnlyTime(event.from)} - ${getOnlyTime(event.to)}",
-                                  ),
-                                ),
-                              ],
-                            )),
-                          ),
-                        ),
+                        EventTile(
+                          event: event,
+                        )
                     ],
                   ),
                 ),

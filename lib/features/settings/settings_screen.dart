@@ -26,7 +26,7 @@ class _SettingsScreenState extends State<SettingsScreen>
   late final CurvedAnimation curve = CurvedAnimation(
       parent: _animationController,
       curve: Curves.fastLinearToSlowEaseIn,
-      reverseCurve: Curves.fastOutSlowIn);
+      reverseCurve: Curves.bounceIn);
 
   @override
   void dispose() {
