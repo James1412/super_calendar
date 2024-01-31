@@ -3,7 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
+import 'package:super_calendar/features/authentication/more_feature_provider.dart';
 import 'package:super_calendar/features/calendar/home_screen.dart';
+import 'package:super_calendar/features/manage/manage_screen.dart';
 import 'package:super_calendar/features/navigation/components/nav_button.dart';
 import 'package:super_calendar/features/settings/settings_screen.dart';
 import 'package:super_calendar/utils.dart';
@@ -19,6 +22,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen>
     with SingleTickerProviderStateMixin {
   late List<Widget> screens = [
     const HomeScreen(),
+    const ManageScreen(),
     const SettingsScreen(),
   ];
 
@@ -35,6 +39,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen>
 
   @override
   Widget build(BuildContext context) {
+    bool moreFeature = context.watch<MoreFeatures>().moreFeatures;
     return Scaffold(
       body: screens[index],
       bottomNavigationBar: BottomAppBar(
@@ -66,11 +71,19 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen>
                   isSelected: index == 0,
                 ),
               ),
+              if (moreFeature)
+                Expanded(
+                  child: NavButton(
+                    icon: Iconsax.tag,
+                    onTap: () => onNavTap(1),
+                    isSelected: index == 1,
+                  ),
+                ),
               Expanded(
                 child: NavButton(
                   icon: Iconsax.setting,
-                  onTap: () => onNavTap(1),
-                  isSelected: index == 1,
+                  onTap: () => onNavTap(2),
+                  isSelected: index == 2,
                 ),
               ),
             ],

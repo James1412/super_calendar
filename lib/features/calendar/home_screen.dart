@@ -26,8 +26,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  final List<Event> meetings = <Event>[];
-
   Color? dateTextColor(DateTime datetime, bool moreFeatures) {
     final bool isSaturday = datetime.weekday == 6;
     final bool isSunday = datetime.weekday == 7;
@@ -207,86 +205,130 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  if (showAgenda)
-                    Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  _calendarController.displayDate =
-                                      DateTime.now();
-                                  setState(() {
-                                    selectedDate = DateTime.now();
-                                  });
-                                },
-                                child: Text(
-                                  "Go to today",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              height: 40,
-                              child: GestureDetector(
-                                onTap: () {
-                                  if (Platform.isIOS) {
-                                    HapticFeedback.lightImpact();
-                                  }
-                                  setState(() {
-                                    showAgenda = !showAgenda;
-                                  });
-                                },
-                                child: const Icon(
-                                  Iconsax.close_circle,
-                                  size: 25,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.25,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: ListView(
-                              children: [
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        getDayName(selectedDate),
-                                        style: const TextStyle(fontSize: 25),
-                                      ),
-                                      Text(
-                                        selectedDate.day.toString(),
-                                        style: const TextStyle(fontSize: 25),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  if (showAgenda) getAgenda(context),
                 ],
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Column getAgenda(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                onTap: () {
+                  _calendarController.displayDate = DateTime.now();
+                  setState(() {
+                    selectedDate = DateTime.now();
+                  });
+                },
+                child: Container(
+                  width: 90,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  child: const Center(
+                    child: Text(
+                      "Go to today",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(10),
+              height: 40,
+              child: GestureDetector(
+                onTap: () {
+                  if (Platform.isIOS) {
+                    HapticFeedback.lightImpact();
+                  }
+                  setState(() {
+                    showAgenda = !showAgenda;
+                  });
+                },
+                child: const Icon(
+                  Iconsax.close_circle,
+                  size: 30,
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.25,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 70,
+                  child: Column(
+                    children: [
+                      Text(
+                        getDayName(selectedDate),
+                        style: const TextStyle(fontSize: 25),
+                      ),
+                      Text(
+                        selectedDate.day.toString(),
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: ListView(
+                    children: [
+                      for (Event event in Provider.of<DataSourceViewModel>(
+                              context,
+                              listen: false)
+                          .dataSource)
+                        Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(
+                              vertical: 5,
+                            ),
+                            width: 280,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: event.background,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Center(
+                                child: Text(
+                              event.eventName,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            )),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

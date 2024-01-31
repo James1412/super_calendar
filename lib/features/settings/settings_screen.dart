@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:animated_emoji/animated_emoji.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +14,30 @@ class SettingsScreen extends StatefulWidget {
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class _SettingsScreenState extends State<SettingsScreen>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 400),
+    reverseDuration: const Duration(milliseconds: 300),
+  );
+  late final Animation<double> scale =
+      Tween(begin: 1.0, end: 1.3).animate(curve);
+  late final CurvedAnimation curve = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.fastLinearToSlowEaseIn,
+      reverseCurve: Curves.fastOutSlowIn);
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    curve.dispose();
+    super.dispose();
+  }
+
+  bool animateMuscle = false;
+  bool animateMoon = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +52,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           InkWell(
             onTap: () {},
             child: const ListTile(
-              title: Text("How to use?"),
+              title: Text("How to use the app❓"),
             ),
           ),
           SwitchListTile(
@@ -37,8 +60,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
             inactiveThumbColor: Colors.grey,
             inactiveTrackColor: Colors.grey.shade300,
             trackOutlineColor: MaterialStateProperty.all(Colors.transparent),
-            title: const Text(
-              "Enable dark mode",
+            title: Row(
+              children: [
+                const Text(
+                  "Enable dark mode ",
+                ),
+                AnimatedEmoji(
+                  AnimatedEmojis.moonFaceLastQuarter,
+                  animate: animateMoon,
+                ),
+              ],
             ),
             value: isDarkMode(context),
             onChanged: (value) {
@@ -46,26 +77,69 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 HapticFeedback.selectionClick();
               }
               context.read<DarkModeProvider>().setDarkMode(value);
+              if (Provider.of<DarkModeProvider>(context, listen: false)
+                  .isDarkMode) {
+                setState(() {
+                  animateMoon = true;
+                });
+              } else {
+                setState(() {
+                  animateMoon = false;
+                });
+              }
             },
           ),
-          SwitchListTile(
-            activeColor: Theme.of(context).primaryColor,
-            inactiveThumbColor: Colors.grey,
-            inactiveTrackColor: Colors.grey.shade300,
-            trackOutlineColor: MaterialStateProperty.all(Colors.transparent),
-            title: const Text("Enable more features"),
-            value: context.watch<MoreFeatures>().moreFeatures,
-            onChanged: (value) {
-              if (Platform.isIOS) {
-                HapticFeedback.selectionClick();
-              }
-              context.read<MoreFeatures>().setMoreFeatures(value);
-            },
+          AnimatedBuilder(
+            animation: _animationController,
+            builder: (context, child) => ScaleTransition(
+              scale: scale,
+              child: SwitchListTile(
+                activeColor: Theme.of(context).primaryColor,
+                inactiveThumbColor: Colors.grey,
+                inactiveTrackColor: Colors.grey.shade300,
+                trackOutlineColor:
+                    MaterialStateProperty.all(Colors.transparent),
+                title: Row(
+                  children: [
+                    const Text("Enable feature rich mode "),
+                    AnimatedEmoji(
+                      AnimatedEmojis.muscle,
+                      size: 20,
+                      animate: animateMuscle,
+                    ),
+                  ],
+                ),
+                value: context.watch<MoreFeatures>().moreFeatures,
+                onChanged: (value) async {
+                  if (Platform.isIOS) {
+                    HapticFeedback.selectionClick();
+                  }
+                  context.read<MoreFeatures>().setMoreFeatures(value);
+                  if (Provider.of<MoreFeatures>(context, listen: false)
+                      .moreFeatures) {
+                    await _animationController.forward();
+                    await _animationController.reverse();
+                    setState(() {
+                      animateMuscle = true;
+                    });
+                  } else {
+                    setState(() {
+                      animateMuscle = false;
+                    });
+                  }
+                },
+              ),
+            ),
           ),
           InkWell(
             onTap: () {},
             child: const ListTile(
-              title: Text("What is included in more features?"),
+                title: Text("What's included in feature rich mode? 🤔")),
+          ),
+          InkWell(
+            onTap: () {},
+            child: const ListTile(
+              title: Text("Manage your features 🚀"),
             ),
           ),
         ],
