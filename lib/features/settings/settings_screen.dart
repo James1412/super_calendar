@@ -142,6 +142,10 @@ class _SettingsScreenState extends State<SettingsScreen>
               title: Text("Manage your features 🚀"),
             ),
           ),
+          InkWell(
+            onTap: () {},
+            child: const ListTile(title: Text("Sign up to enable syncing 💥")),
+          ),
         ],
       ),
     );

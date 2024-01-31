@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:super_calendar/features/darkmode/dark_mode_provider.dart';
 
 DateTime getOnlyDate(DateTime date) {
   return DateTime(date.year, date.month, date.day);
+}
+
+String getOnlyTime(DateTime datetime) {
+  return DateFormat.jm().format(datetime);
 }
 
 String getDayName(DateTime dateTime) {

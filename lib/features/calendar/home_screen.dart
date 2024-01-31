@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:super_calendar/features/authentication/more_feature_provider.dart';
 import 'package:super_calendar/features/calendar/components/calendar_datasource.dart';
@@ -216,6 +217,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Column getAgenda(BuildContext context) {
+    bool moreFeature = context.watch<MoreFeatures>().moreFeatures;
+    bool notToday = getOnlyDate(selectedDate) != getOnlyDate(DateTime.now());
     return Column(
       children: [
         Row(
@@ -223,50 +226,69 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: GestureDetector(
-                onTap: () {
-                  _calendarController.displayDate = DateTime.now();
-                  setState(() {
-                    selectedDate = DateTime.now();
-                  });
-                },
-                child: Container(
-                  width: 90,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "Go to today",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 13,
-                      ),
-                    ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  DateFormat.yMMMMd().format(selectedDate),
+                  style: const TextStyle(
+                    fontSize: 23,
                   ),
                 ),
               ),
             ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              height: 40,
-              child: GestureDetector(
-                onTap: () {
-                  if (Platform.isIOS) {
-                    HapticFeedback.lightImpact();
-                  }
-                  setState(() {
-                    showAgenda = !showAgenda;
-                  });
-                },
-                child: const Icon(
-                  Iconsax.close_circle,
-                  size: 30,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    _calendarController.displayDate = DateTime.now();
+                    _calendarController.selectedDate = DateTime.now();
+                    setState(() {
+                      selectedDate = DateTime.now();
+                    });
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 400),
+                    width: 90,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: notToday
+                          ? Theme.of(context).primaryColor
+                          : Colors.transparent,
+                    ),
+                    child: notToday
+                        ? const Center(
+                            child: Text(
+                              "Go to today",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 13,
+                              ),
+                            ),
+                          )
+                        : null,
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      if (Platform.isIOS) {
+                        HapticFeedback.lightImpact();
+                      }
+                      setState(() {
+                        showAgenda = !showAgenda;
+                      });
+                    },
+                    child: const Icon(
+                      Iconsax.close_circle,
+                      size: 30,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -276,21 +298,6 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Row(
               children: [
-                SizedBox(
-                  width: 70,
-                  child: Column(
-                    children: [
-                      Text(
-                        getDayName(selectedDate),
-                        style: const TextStyle(fontSize: 25),
-                      ),
-                      Text(
-                        selectedDate.day.toString(),
-                        style: const TextStyle(fontSize: 20),
-                      ),
-                    ],
-                  ),
-                ),
                 Expanded(
                   child: ListView(
                     children: [
@@ -304,20 +311,60 @@ class _HomeScreenState extends State<HomeScreen> {
                             margin: const EdgeInsets.symmetric(
                               vertical: 5,
                             ),
-                            width: 280,
+                            width: double.maxFinite,
                             height: 50,
                             decoration: BoxDecoration(
-                              color: event.background,
+                              color: Colors.grey.withOpacity(0.15),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Center(
-                                child: Text(
-                              event.eventName,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
+                                child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 10,
+                                        horizontal: 15,
+                                      ),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: event.background,
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                        ),
+                                        width: 5,
+                                        height: double.maxFinite,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.4,
+                                      child: Text(
+                                        event.eventName,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: isDarkMode(context)
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15),
+                                  child: Text(
+                                    event.isAllDay
+                                        ? "all-day"
+                                        : "${getOnlyTime(event.from)} - ${getOnlyTime(event.to)}",
+                                  ),
+                                ),
+                              ],
                             )),
                           ),
                         ),
