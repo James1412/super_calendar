@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:super_calendar/features/calendar/components/event_model.dart';
 import 'package:super_calendar/features/darkmode/dark_mode_provider.dart';
 
 DateTime getOnlyDate(DateTime date) {
@@ -36,4 +37,19 @@ String getDay(DateTime date) {
 
 bool isDarkMode(BuildContext context) {
   return context.watch<DarkModeProvider>().isDarkMode;
+}
+
+List<Event> filterEventsByDate(
+    DateTime selectedDate, List<Event> dataSource, bool isAllDay) {
+  return dataSource
+      .where((element) =>
+          (selectedDate.isBefore(element.to) ||
+              getOnlyDate(selectedDate)
+                  .isAtSameMomentAs(getOnlyDate(element.to))) &&
+          (selectedDate.isAfter(element.from) ||
+              getOnlyDate(selectedDate)
+                  .isAtSameMomentAs(getOnlyDate(element.from))) &&
+          (isAllDay ? element.isAllDay : !element.isAllDay))
+      .toList()
+    ..sort((a, b) => a.from.compareTo(b.from));
 }

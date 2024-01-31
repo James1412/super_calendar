@@ -84,6 +84,18 @@ class _SettingsScreenState extends State<SettingsScreen>
               }
             },
           ),
+          InkWell(
+            onTap: () {},
+            child: SwitchListTile(
+              activeColor: Theme.of(context).primaryColor,
+              inactiveThumbColor: Colors.grey,
+              inactiveTrackColor: Colors.grey.shade300,
+              trackOutlineColor: MaterialStateProperty.all(Colors.transparent),
+              value: false,
+              onChanged: (value) {},
+              title: const Text("Show Lunar Calendar 📅"),
+            ),
+          ),
           AnimatedBuilder(
             animation: _animationController,
             builder: (context, child) => ScaleTransition(

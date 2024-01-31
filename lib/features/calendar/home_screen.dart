@@ -8,6 +8,7 @@ import 'package:super_calendar/features/authentication/more_feature_provider.dar
 import 'package:super_calendar/features/calendar/components/calendar_datasource.dart';
 import 'package:super_calendar/features/calendar/components/event_model.dart';
 import 'package:super_calendar/features/calendar/components/event_tile.dart';
+import 'package:super_calendar/features/calendar/components/month_cell.dart';
 import 'package:super_calendar/features/calendar/view_models/data_source_vm.dart';
 import 'package:super_calendar/utils.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -65,33 +66,12 @@ class _HomeScreenState extends State<HomeScreen> {
       isSelectedDate = getOnlyDate(details.date) ==
           getOnlyDate(_calendarController.selectedDate!);
     }
-    return Align(
-      alignment: Alignment.topCenter,
-      child: Container(
-        padding: const EdgeInsets.only(top: 2),
-        width: 30,
-        height: 30,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: isToday
-              ? Theme.of(context).primaryColor
-              : isSelectedDate
-                  ? Theme.of(context).primaryColor.withOpacity(0.3)
-                  : null,
-        ),
-        child: Text(
-          details.date.day.toString(),
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w900,
-            color: isToday
-                ? Colors.white
-                : dateTextColor(details.date, moreFeatures),
-          ),
-        ),
-      ),
-    );
+    return MonthCell(
+        isToday: isToday,
+        isSelectedDate: isSelectedDate,
+        details: details,
+        dateTextColor: dateTextColor,
+        moreFeatures: moreFeatures);
   }
 
   Future<void> onViewChanged(ViewChangedDetails viewChangedDetails) async {
@@ -220,15 +200,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Column getAgenda(BuildContext context) {
     bool moreFeature = context.watch<MoreFeatures>().moreFeatures;
     bool notToday = getOnlyDate(selectedDate) != getOnlyDate(DateTime.now());
-    List eventsOnDate = context
-        .watch<DataSourceViewModel>()
-        .dataSource
-        .where((element) =>
-            (selectedDate.isBefore(element.to) ||
-                selectedDate.isAtSameMomentAs(element.to)) &&
-            (selectedDate.isAfter(element.from) ||
-                selectedDate.isAtSameMomentAs(element.from)))
-        .toList();
+    List<Event> eventsOnDate = filterEventsByDate(selectedDate,
+            context.watch<DataSourceViewModel>().dataSource, true) +
+        filterEventsByDate(selectedDate,
+            context.watch<DataSourceViewModel>().dataSource, false);
     return Column(
       children: [
         Row(

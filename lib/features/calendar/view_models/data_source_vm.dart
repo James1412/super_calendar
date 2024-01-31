@@ -5,6 +5,13 @@ import 'package:super_calendar/utils.dart';
 class DataSourceViewModel extends ChangeNotifier {
   List<Event> dataSource = [
     Event(
+      'Custom',
+      getOnlyDate(DateTime.now()).add(const Duration(hours: 2)),
+      getOnlyDate(DateTime.now()).add(const Duration(hours: 6)),
+      const Color(0xFF0F8644),
+      false,
+    ),
+    Event(
       'ConferenceConferenceConferenceConferenceConference',
       getOnlyDate(DateTime.now()),
       getOnlyDate(DateTime.now()).add(const Duration(hours: 2)),
@@ -12,16 +19,18 @@ class DataSourceViewModel extends ChangeNotifier {
       true,
     ),
     Event(
-        'Conference',
-        getOnlyDate(DateTime.now()),
-        getOnlyDate(DateTime.now()).add(const Duration(hours: 50)),
-        const Color(0xFF0F8644),
-        false),
+      'Conference',
+      getOnlyDate(DateTime.now()),
+      getOnlyDate(DateTime.now()).add(const Duration(hours: 50)),
+      const Color(0xFF0F8644),
+      false,
+    ),
     Event(
-        'Conference',
-        getOnlyDate(DateTime.now()),
-        getOnlyDate(DateTime.now()).add(const Duration(hours: 2)),
-        const Color(0xFF0F8644),
-        false),
+      'Conference',
+      getOnlyDate(DateTime.now()),
+      getOnlyDate(DateTime.now()).add(const Duration(hours: 2)),
+      const Color(0xFF0F8644),
+      true,
+    ),
   ];
 }
