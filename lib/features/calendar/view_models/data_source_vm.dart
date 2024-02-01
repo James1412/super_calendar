@@ -32,9 +32,16 @@ class DataSourceViewModel extends ChangeNotifier {
       color: const Color(0xFF0F8644),
       isAllDay: true,
     ),
+    Appointment(
+      subject: 'Right Now',
+      startTime: getOnlyDate(DateTime.now()),
+      endTime: getOnlyDate(DateTime.now()).add(const Duration(hours: 24)),
+      color: const Color(0xFF0F8644),
+      isAllDay: false,
+    ),
   ];
 
-  void quickAddNewEvent({
+  void addQuickNewAppointment({
     required DateTime date,
     required DateTime? time,
     required String text,

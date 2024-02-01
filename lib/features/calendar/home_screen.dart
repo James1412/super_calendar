@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:super_calendar/features/calendar/components/text_magnifier.dart';
 import 'package:super_calendar/features/calendar/components/today_button.dart';
+import 'package:super_calendar/features/settings/view_models/dark_mode_provider.dart';
 import 'package:super_calendar/features/settings/view_models/more_feature_provider.dart';
 import 'package:super_calendar/features/calendar/models/calendar_datasource.dart';
 import 'package:super_calendar/features/calendar/components/appointment_tile.dart';
@@ -93,14 +94,17 @@ class _HomeScreenState extends State<HomeScreen> {
   void onTap(CalendarTapDetails calendarTapDetails) {
     if (calendarTapDetails.targetElement == CalendarElement.header) {
       showModalBottomSheet(
-          backgroundColor: Colors.white,
+          backgroundColor:
+              Provider.of<DarkModeProvider>(context, listen: false).isDarkMode
+                  ? Colors.black
+                  : Colors.white,
           context: context,
           builder: (context) => SizedBox(
                 height: MediaQuery.of(context).size.height * 0.3,
                 child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.only(right: 15.0, top: 15),
                       child: GestureDetector(
                         onTap: () {
                           _calendarController.displayDate = DateTime.now();
@@ -142,6 +146,9 @@ class _HomeScreenState extends State<HomeScreen> {
       });
       selectedDate = calendarTapDetails.date!;
       setState(() {});
+    } else if (calendarTapDetails.targetElement ==
+        CalendarElement.appointment) {
+      //TODO: Weekly view appointments
     }
   }
 
@@ -298,7 +305,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   default:
                     repeat = null;
                 }
-                context.read<DataSourceViewModel>().quickAddNewEvent(
+                context.read<DataSourceViewModel>().addQuickNewAppointment(
                       context: context,
                       date: calendarLongPressDetails.date!,
                       time: selectedTime,
@@ -394,84 +401,58 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Column getAgenda(BuildContext context) {
-    bool moreFeature = context.watch<MoreFeatures>().moreFeatures;
-    bool isToday = getOnlyDate(selectedDate) != getOnlyDate(DateTime.now());
+    bool isToday = getOnlyDate(selectedDate) == getOnlyDate(DateTime.now());
     List<Appointment> sortedAppoinmentsOnDate =
         filterEventsByDate(selectedDate, appointmentsOnDate, true) +
             filterEventsByDate(selectedDate, appointmentsOnDate, false);
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 5.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: Text(
-                  DateFormat.yMMMMd().format(selectedDate),
-                  style: const TextStyle(
-                    fontSize: 21,
-                  ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: Text(
+                DateFormat.yMMMMd().format(selectedDate),
+                style: const TextStyle(
+                  fontSize: 21,
                 ),
               ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  if (moreFeature)
-                    GestureDetector(
-                      onTap: () {
-                        _calendarController.displayDate = DateTime.now();
-                        _calendarController.selectedDate = DateTime.now();
-                        setState(() {
-                          selectedDate = DateTime.now();
-                        });
-                      },
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 400),
-                        width: 70,
-                        height: 35,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: !isToday
-                              ? Theme.of(context).primaryColor
-                              : Colors.transparent,
-                        ),
-                        child: !isToday
-                            ? const Center(
-                                child: Text(
-                                  "Today",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              )
-                            : null,
-                      ),
-                    ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        if (Platform.isIOS) {
-                          HapticFeedback.lightImpact();
-                        }
-                        setState(() {
-                          showAgenda = !showAgenda;
-                        });
-                      },
-                      child: const Icon(
-                        Iconsax.close_circle,
-                        size: 30,
-                      ),
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (!isToday)
+                  GestureDetector(
+                    onTap: () {
+                      _calendarController.displayDate = DateTime.now();
+                      _calendarController.selectedDate = DateTime.now();
+                      selectedDate = DateTime.now();
+                      selectedDate = DateTime.now();
+                      setState(() {});
+                    },
+                    child: const TodayButton(),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      if (Platform.isIOS) {
+                        HapticFeedback.lightImpact();
+                      }
+                      setState(() {
+                        showAgenda = !showAgenda;
+                      });
+                    },
+                    child: const Icon(
+                      Iconsax.close_circle,
+                      size: 30,
                     ),
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
         const Divider(
           indent: 15,
