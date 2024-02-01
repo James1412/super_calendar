@@ -92,12 +92,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void onTap(CalendarTapDetails calendarTapDetails) {
+    bool isDarkMode =
+        Provider.of<DarkModeProvider>(context, listen: false).isDarkMode;
     if (calendarTapDetails.targetElement == CalendarElement.header) {
       showModalBottomSheet(
-          backgroundColor:
-              Provider.of<DarkModeProvider>(context, listen: false).isDarkMode
-                  ? Colors.black
-                  : Colors.white,
+          backgroundColor: isDarkMode ? Colors.black : Colors.white,
           context: context,
           builder: (context) => SizedBox(
                 height: MediaQuery.of(context).size.height * 0.3,
@@ -192,8 +191,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 20,
               ),
               CupertinoTextField(
+                style: TextStyle(
+                    color: isDarkMode(context) ? Colors.white : Colors.black),
                 autofocus: true,
-                cursorColor: Colors.black,
+                cursorColor: isDarkMode(context) ? Colors.white : Colors.black,
                 magnifierConfiguration: TextMagnifierConfiguration(
                   magnifierBuilder: (context, controller, magnifierInfo) =>
                       CustomMagnifier(magnifierInfo: magnifierInfo),
@@ -206,7 +207,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 10,
               ),
               CupertinoListTile(
-                title: const Text("Add time?"),
+                title: Text(
+                  "Add time?",
+                  style: TextStyle(
+                      color: isDarkMode(context) ? Colors.white : Colors.black),
+                ),
                 trailing: CupertinoCheckbox(
                   value: addTime,
                   onChanged: (value) {
@@ -229,7 +234,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               CupertinoListTile(
-                title: const Text("Repeat?"),
+                title: Text(
+                  "Repeat?",
+                  style: TextStyle(
+                      color: isDarkMode(context) ? Colors.white : Colors.black),
+                ),
                 trailing: CupertinoCheckbox(
                   value: repeat,
                   onChanged: (value) {
@@ -247,7 +256,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       type: MaterialType.transparency,
                       child: Expanded(
                         child: DropdownButton(
-                          dropdownColor: Colors.grey.shade300,
+                          dropdownColor: isDarkMode(context)
+                              ? Colors.black45
+                              : Colors.grey.shade300,
                           items: const [
                             DropdownMenuItem<String>(
                                 value: 'day', child: Text("day")),
@@ -327,6 +338,11 @@ class _HomeScreenState extends State<HomeScreen> {
   bool showAgenda = false;
   DateTime selectedDate = DateTime.now();
   List<Appointment> appointmentsOnDate = <Appointment>[];
+
+  void removeAppointment(Appointment appointment) {
+    appointmentsOnDate.removeAt(appointmentsOnDate.indexOf(appointment));
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -468,6 +484,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: ListView.builder(
                     itemCount: sortedAppoinmentsOnDate.length,
                     itemBuilder: (context, index) => AppointmentTile(
+                      onRemove: removeAppointment,
                       event: sortedAppoinmentsOnDate[index],
                     ),
                   ),

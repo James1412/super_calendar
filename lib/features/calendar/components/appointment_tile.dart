@@ -2,22 +2,87 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:super_calendar/features/calendar/view_models/data_source_vm.dart';
+import 'package:super_calendar/features/settings/view_models/more_feature_provider.dart';
 import 'package:super_calendar/utils.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-class AppointmentTile extends StatelessWidget {
+class AppointmentTile extends StatefulWidget {
   final Appointment event;
-  const AppointmentTile({super.key, required this.event});
+  final Function onRemove;
+  const AppointmentTile(
+      {super.key, required this.event, required this.onRemove});
 
-  void onTap() {
-    //TODO: When default mode
+  @override
+  State<AppointmentTile> createState() => _AppointmentTileState();
+}
+
+class _AppointmentTileState extends State<AppointmentTile> {
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    controller.text = widget.event.subject;
+    super.initState();
+  }
+
+  TextEditingController controller = TextEditingController();
+  void onTap(BuildContext context) {
+    //When default mode
+    if (!Provider.of<MoreFeatures>(context, listen: false).moreFeatures) {
+      showCupertinoDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: const Text("Change event"),
+          content: Column(
+            children: [
+              const SizedBox(
+                height: 20,
+              ),
+              CupertinoTextField(
+                style: TextStyle(
+                    color: isDarkMode(context) ? Colors.white : Colors.black),
+                cursorColor: isDarkMode(context) ? Colors.white : Colors.black,
+                clearButtonMode: OverlayVisibilityMode.editing,
+                controller: controller,
+              ),
+            ],
+          ),
+          actions: [
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              textStyle: const TextStyle(color: Colors.red),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("Cancel"),
+            ),
+            CupertinoDialogAction(
+              onPressed: () {
+                context.read<DataSourceViewModel>().changeAppointmentName(
+                    appointment: widget.event, text: controller.text);
+                Navigator.pop(context);
+              },
+              isDefaultAction: true,
+              textStyle: TextStyle(color: Theme.of(context).primaryColor),
+              child: const Text("Apply"),
+            ),
+          ],
+        ),
+      );
+    }
     //TODO: When more Feature mode
   }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: () => onTap(context),
       borderRadius: BorderRadius.circular(10),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5.0),
@@ -28,7 +93,12 @@ class AppointmentTile extends StatelessWidget {
               SlidableAction(
                 backgroundColor: Colors.red,
                 borderRadius: BorderRadius.circular(10),
-                onPressed: (value) {},
+                onPressed: (value) {
+                  widget.onRemove(widget.event);
+                  context
+                      .read<DataSourceViewModel>()
+                      .deleteAppoinment(appointment: widget.event);
+                },
                 icon: FontAwesomeIcons.trash,
               ),
             ],
@@ -53,7 +123,7 @@ class AppointmentTile extends StatelessWidget {
                       ),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: event.color,
+                          color: widget.event.color,
                           borderRadius: BorderRadius.circular(5),
                         ),
                         width: 5,
@@ -63,7 +133,7 @@ class AppointmentTile extends StatelessWidget {
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.4,
                       child: Text(
-                        event.subject,
+                        widget.event.subject,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -141,14 +211,16 @@ class AppointmentTile extends StatelessWidget {
   }
 
   String getTimeText() {
-    if (event.isAllDay) {
+    if (widget.event.isAllDay) {
       return 'all-day';
-    } else if (getOnlyDate(event.startTime) != getOnlyDate(event.endTime)) {
-      return "${getThreeCharDay(event.startTime)} ${getOnlyTime(event.startTime)} \n - ${getThreeCharDay(event.endTime)} ${getOnlyTime(event.endTime)}";
-    } else if (getOnlyTime(event.startTime) == getOnlyTime(event.endTime)) {
-      return getOnlyTime(event.startTime);
+    } else if (getOnlyDate(widget.event.startTime) !=
+        getOnlyDate(widget.event.endTime)) {
+      return "${getThreeCharDay(widget.event.startTime)} ${getOnlyTime(widget.event.startTime)} \n - ${getThreeCharDay(widget.event.endTime)} ${getOnlyTime(widget.event.endTime)}";
+    } else if (getOnlyTime(widget.event.startTime) ==
+        getOnlyTime(widget.event.endTime)) {
+      return getOnlyTime(widget.event.startTime);
     }
 
-    return "${getOnlyTime(event.startTime)} - ${getOnlyTime(event.endTime)}";
+    return "${getOnlyTime(widget.event.startTime)} - ${getOnlyTime(widget.event.endTime)}";
   }
 }
