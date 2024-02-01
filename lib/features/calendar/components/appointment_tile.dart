@@ -9,10 +9,10 @@ import 'package:super_calendar/utils.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class AppointmentTile extends StatefulWidget {
-  final Appointment event;
+  final Appointment appointment;
   final Function onRemove;
   const AppointmentTile(
-      {super.key, required this.event, required this.onRemove});
+      {super.key, required this.appointment, required this.onRemove});
 
   @override
   State<AppointmentTile> createState() => _AppointmentTileState();
@@ -27,7 +27,7 @@ class _AppointmentTileState extends State<AppointmentTile> {
 
   @override
   void initState() {
-    controller.text = widget.event.subject;
+    controller.text = widget.appointment.subject;
     super.initState();
   }
 
@@ -58,6 +58,7 @@ class _AppointmentTileState extends State<AppointmentTile> {
               isDefaultAction: true,
               textStyle: const TextStyle(color: Colors.red),
               onPressed: () {
+                controller.text = widget.appointment.subject;
                 Navigator.pop(context);
               },
               child: const Text("Cancel"),
@@ -65,7 +66,7 @@ class _AppointmentTileState extends State<AppointmentTile> {
             CupertinoDialogAction(
               onPressed: () {
                 context.read<DataSourceViewModel>().changeAppointmentName(
-                    appointment: widget.event, text: controller.text);
+                    appointment: widget.appointment, text: controller.text);
                 Navigator.pop(context);
               },
               isDefaultAction: true,
@@ -75,8 +76,9 @@ class _AppointmentTileState extends State<AppointmentTile> {
           ],
         ),
       );
+    } else {
+      //TODO: When more Feature mode
     }
-    //TODO: When more Feature mode
   }
 
   @override
@@ -94,10 +96,10 @@ class _AppointmentTileState extends State<AppointmentTile> {
                 backgroundColor: Colors.red,
                 borderRadius: BorderRadius.circular(10),
                 onPressed: (value) {
-                  widget.onRemove(widget.event);
+                  widget.onRemove(widget.appointment);
                   context
                       .read<DataSourceViewModel>()
-                      .deleteAppoinment(appointment: widget.event);
+                      .deleteAppoinment(appointment: widget.appointment);
                 },
                 icon: FontAwesomeIcons.trash,
               ),
@@ -105,7 +107,7 @@ class _AppointmentTileState extends State<AppointmentTile> {
           ),
           child: Container(
             width: double.maxFinite,
-            height: 50,
+            height: MediaQuery.of(context).size.height * 0.060,
             decoration: BoxDecoration(
               color: Colors.grey.withOpacity(0.15),
               borderRadius: BorderRadius.circular(10),
@@ -123,7 +125,7 @@ class _AppointmentTileState extends State<AppointmentTile> {
                       ),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: widget.event.color,
+                          color: widget.appointment.color,
                           borderRadius: BorderRadius.circular(5),
                         ),
                         width: 5,
@@ -133,7 +135,7 @@ class _AppointmentTileState extends State<AppointmentTile> {
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.4,
                       child: Text(
-                        widget.event.subject,
+                        widget.appointment.subject,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -211,16 +213,16 @@ class _AppointmentTileState extends State<AppointmentTile> {
   }
 
   String getTimeText() {
-    if (widget.event.isAllDay) {
+    if (widget.appointment.isAllDay) {
       return 'all-day';
-    } else if (getOnlyDate(widget.event.startTime) !=
-        getOnlyDate(widget.event.endTime)) {
-      return "${getThreeCharDay(widget.event.startTime)} ${getOnlyTime(widget.event.startTime)} \n - ${getThreeCharDay(widget.event.endTime)} ${getOnlyTime(widget.event.endTime)}";
-    } else if (getOnlyTime(widget.event.startTime) ==
-        getOnlyTime(widget.event.endTime)) {
-      return getOnlyTime(widget.event.startTime);
+    } else if (getOnlyDate(widget.appointment.startTime) !=
+        getOnlyDate(widget.appointment.endTime)) {
+      return "${getThreeCharDay(widget.appointment.startTime)} ${getOnlyTime(widget.appointment.startTime)} \n - ${getThreeCharDay(widget.appointment.endTime)} ${getOnlyTime(widget.appointment.endTime)}";
+    } else if (getOnlyTime(widget.appointment.startTime) ==
+        getOnlyTime(widget.appointment.endTime)) {
+      return getOnlyTime(widget.appointment.startTime);
     }
 
-    return "${getOnlyTime(widget.event.startTime)} - ${getOnlyTime(widget.event.endTime)}";
+    return "${getOnlyTime(widget.appointment.startTime)} - ${getOnlyTime(widget.appointment.endTime)}";
   }
 }

@@ -76,11 +76,9 @@ class DataSourceViewModel extends ChangeNotifier {
   }
 
   void deleteAppoinment({required Appointment appointment}) {
-    print("Before ${dataSource.length}");
-    dataSource
-        .removeAt(dataSource.indexWhere((element) => element == appointment));
-    CalendarDataSourceAction.remove;
-    print(dataSource.length);
+    dataSource.removeAt(
+        dataSource.indexWhere((element) => element.id == appointment.id));
+
     notifyListeners();
   }
 }

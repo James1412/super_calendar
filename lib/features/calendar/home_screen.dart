@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
+import 'package:lunar/calendar/Lunar.dart';
+import 'package:lunar/calendar/Solar.dart';
 import 'package:provider/provider.dart';
 import 'package:super_calendar/features/calendar/components/text_magnifier.dart';
 import 'package:super_calendar/features/calendar/components/today_button.dart';
 import 'package:super_calendar/features/settings/view_models/dark_mode_provider.dart';
+import 'package:super_calendar/features/settings/view_models/lunar_vm.dart';
 import 'package:super_calendar/features/settings/view_models/more_feature_provider.dart';
 import 'package:super_calendar/features/calendar/models/calendar_datasource.dart';
 import 'package:super_calendar/features/calendar/components/appointment_tile.dart';
@@ -175,15 +178,20 @@ class _HomeScreenState extends State<HomeScreen> {
     bool addTime = false;
     bool repeat = false;
     String? dropDownValue;
+
     showCupertinoDialog(
       context: context,
       builder: (context) => StatefulBuilder(builder: (context, setState) {
         return CupertinoAlertDialog(
-          title: Text(
-            DateFormat.yMMMMd()
-                .format(calendarLongPressDetails.date!)
-                .toString(),
-            style: const TextStyle(fontWeight: FontWeight.w500),
+          title: Column(
+            children: [
+              Text(
+                DateFormat.yMMMMd()
+                    .format(calendarLongPressDetails.date!)
+                    .toString(),
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+            ],
           ),
           content: Column(
             children: [
@@ -254,27 +262,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     const Text("Repeat every"),
                     Material(
                       type: MaterialType.transparency,
-                      child: Expanded(
-                        child: DropdownButton(
-                          dropdownColor: isDarkMode(context)
-                              ? Colors.black45
-                              : Colors.grey.shade300,
-                          items: const [
-                            DropdownMenuItem<String>(
-                                value: 'day', child: Text("day")),
-                            DropdownMenuItem<String>(
-                                value: 'week', child: Text("week")),
-                            DropdownMenuItem<String>(
-                                value: 'month', child: Text("month")),
-                            DropdownMenuItem<String>(
-                                value: 'year', child: Text("year")),
-                          ],
-                          onChanged: (value) {
-                            dropDownValue = value!;
-                            setState(() {});
-                          },
-                          value: dropDownValue,
-                        ),
+                      child: DropdownButton(
+                        dropdownColor: isDarkMode(context)
+                            ? Colors.black45
+                            : Colors.grey.shade300,
+                        items: const [
+                          DropdownMenuItem<String>(
+                              value: 'day', child: Text("day")),
+                          DropdownMenuItem<String>(
+                              value: 'week', child: Text("week")),
+                          DropdownMenuItem<String>(
+                              value: 'month', child: Text("month")),
+                          DropdownMenuItem<String>(
+                              value: 'year', child: Text("year")),
+                        ],
+                        onChanged: (value) {
+                          dropDownValue = value!;
+                          setState(() {});
+                        },
+                        value: dropDownValue,
                       ),
                     ),
                   ],
@@ -421,6 +427,7 @@ class _HomeScreenState extends State<HomeScreen> {
     List<Appointment> sortedAppoinmentsOnDate =
         filterEventsByDate(selectedDate, appointmentsOnDate, true) +
             filterEventsByDate(selectedDate, appointmentsOnDate, false);
+    bool showLunar = context.watch<LunarViewModel>().showLunarDate;
     return Column(
       children: [
         Row(
@@ -429,9 +436,11 @@ class _HomeScreenState extends State<HomeScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: Text(
-                DateFormat.yMMMMd().format(selectedDate),
-                style: const TextStyle(
-                  fontSize: 21,
+                showLunar
+                    ? "${DateFormat.yMMMMd().format(selectedDate).split(',')[0]} (${Lunar.fromSolar(Solar.fromDate(selectedDate)).getDay().toString()}),${DateFormat.yMMMMd().format(selectedDate).split(',')[1]}"
+                    : DateFormat.yMMMMd().format(selectedDate),
+                style: TextStyle(
+                  fontSize: showLunar ? 19 : 21,
                 ),
               ),
             ),
@@ -478,18 +487,12 @@ class _HomeScreenState extends State<HomeScreen> {
           height: MediaQuery.of(context).size.height * 0.35,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Row(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: sortedAppoinmentsOnDate.length,
-                    itemBuilder: (context, index) => AppointmentTile(
-                      onRemove: removeAppointment,
-                      event: sortedAppoinmentsOnDate[index],
-                    ),
-                  ),
-                ),
-              ],
+            child: ListView.builder(
+              itemCount: sortedAppoinmentsOnDate.length,
+              itemBuilder: (context, index) => AppointmentTile(
+                onRemove: removeAppointment,
+                appointment: sortedAppoinmentsOnDate[index],
+              ),
             ),
           ),
         ),

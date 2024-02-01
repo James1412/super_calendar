@@ -6,4 +6,5 @@ class LunarViewModel extends ChangeNotifier {
     showLunarDate = value;
     notifyListeners();
   }
+  //Lunar.fromSolar(Solar.fromDate(details.date)).getDay().toString(),
 }
