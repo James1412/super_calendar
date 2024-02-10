@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'package:animated_emoji/animated_emoji.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:super_calendar/features/settings/view_models/more_feature_provider.dart';
 import 'package:super_calendar/features/settings/view_models/dark_mode_provider.dart';
-import 'package:super_calendar/features/settings/view_models/lunar_vm.dart';
+import 'package:super_calendar/features/settings/view_models/settings_items_vm.dart';
 import 'package:super_calendar/utils.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -38,7 +39,8 @@ class _SettingsScreenState extends State<SettingsScreen>
 
   bool animateMuscle = false;
   bool animateMoon = false;
-
+  List<int> val = [2, 6];
+  int selectedIndex = 1;
   @override
   Widget build(BuildContext context) {
     bool moreFeature = context.watch<MoreFeatures>().moreFeatures;
@@ -93,6 +95,60 @@ class _SettingsScreenState extends State<SettingsScreen>
               ),
             ),
           ),
+          if (moreFeature)
+            InkWell(
+              onTap: () {
+                showCupertinoModalPopup(
+                  context: context,
+                  builder: (context) => SizedBox(
+                    height: 216,
+                    child: CupertinoPicker(
+                      backgroundColor: Colors.white,
+                      squeeze: 1.2,
+                      magnification: 1.22,
+                      useMagnifier: true,
+                      itemExtent: 32.0,
+                      scrollController: FixedExtentScrollController(
+                          initialItem:
+                              context.watch<SettingsItemViewModel>().index),
+                      onSelectedItemChanged: (value) {
+                        setState(() {
+                          context
+                              .read<SettingsItemViewModel>()
+                              .setWeekNum(value);
+                        });
+                      },
+                      children: [
+                        for (int i = 0;
+                            i <
+                                context
+                                    .watch<SettingsItemViewModel>()
+                                    .indexAndWeekNumList
+                                    .length;
+                            i++)
+                          Center(
+                            child: Text(context
+                                .watch<SettingsItemViewModel>()
+                                .indexAndWeekNumList[i]
+                                .toString()),
+                          ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+              child: ListTile(
+                title: const Text("Number of weeks"),
+                trailing: Text(
+                  context
+                      .watch<SettingsItemViewModel>()
+                      .indexAndWeekNumList[
+                          context.watch<SettingsItemViewModel>().index]
+                      .toString(),
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ),
+            ),
           SwitchListTile(
             activeColor: Theme.of(context).primaryColor,
             inactiveThumbColor: Colors.grey,
@@ -132,9 +188,9 @@ class _SettingsScreenState extends State<SettingsScreen>
             inactiveThumbColor: Colors.grey,
             inactiveTrackColor: Colors.grey.shade300,
             trackOutlineColor: MaterialStateProperty.all(Colors.transparent),
-            value: context.watch<LunarViewModel>().showLunarDate,
+            value: context.watch<SettingsItemViewModel>().showLunarDate,
             onChanged: (value) {
-              context.read<LunarViewModel>().setShowLunarDate(value);
+              context.read<SettingsItemViewModel>().setShowLunarDate(value);
             },
             title: const Text("Show Lunar Calendar 📅"),
           ),

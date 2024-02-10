@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lunar/calendar/Lunar.dart';
 import 'package:lunar/calendar/Solar.dart';
 import 'package:provider/provider.dart';
-import 'package:super_calendar/features/settings/view_models/lunar_vm.dart';
+import 'package:super_calendar/features/settings/view_models/settings_items_vm.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class MonthCell extends StatelessWidget {
@@ -55,10 +55,10 @@ class MonthCell extends StatelessWidget {
               ),
             ),
           ),
-          if (context.watch<LunarViewModel>().showLunarDate)
+          if (context.watch<SettingsItemViewModel>().showLunarDate)
             Text(
               Lunar.fromSolar(Solar.fromDate(details.date)).getDay().toString(),
-              style: const TextStyle(fontSize: 10, color: Colors.grey),
+              style: const TextStyle(fontSize: 13, color: Colors.grey),
             ),
         ],
       ),

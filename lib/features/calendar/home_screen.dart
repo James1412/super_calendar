@@ -7,10 +7,9 @@ import 'package:intl/intl.dart';
 import 'package:lunar/calendar/Lunar.dart';
 import 'package:lunar/calendar/Solar.dart';
 import 'package:provider/provider.dart';
-import 'package:super_calendar/features/calendar/components/text_magnifier.dart';
 import 'package:super_calendar/features/calendar/components/today_button.dart';
 import 'package:super_calendar/features/settings/view_models/dark_mode_provider.dart';
-import 'package:super_calendar/features/settings/view_models/lunar_vm.dart';
+import 'package:super_calendar/features/settings/view_models/settings_items_vm.dart';
 import 'package:super_calendar/features/settings/view_models/more_feature_provider.dart';
 import 'package:super_calendar/features/calendar/models/calendar_datasource.dart';
 import 'package:super_calendar/features/calendar/components/appointment_tile.dart';
@@ -135,7 +134,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ));
     }
-    if (calendarTapDetails.targetElement == CalendarElement.calendarCell) {
+    if (calendarTapDetails.targetElement == CalendarElement.calendarCell &&
+        _calendarController.view == CalendarView.month) {
       if (Platform.isIOS) {
         HapticFeedback.lightImpact();
       }
@@ -203,10 +203,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: isDarkMode(context) ? Colors.white : Colors.black),
                 autofocus: true,
                 cursorColor: isDarkMode(context) ? Colors.white : Colors.black,
-                magnifierConfiguration: TextMagnifierConfiguration(
-                  magnifierBuilder: (context, controller, magnifierInfo) =>
-                      CustomMagnifier(magnifierInfo: magnifierInfo),
-                ),
                 controller: _quickAddController,
                 clearButtonMode: OverlayVisibilityMode.always,
                 placeholder: "Add new event",
@@ -353,8 +349,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     bool moreFeatures = context.watch<MoreFeatures>().moreFeatures;
+    List weekNums = context.watch<SettingsItemViewModel>().indexAndWeekNumList;
+    int weekNumIndex = context.watch<SettingsItemViewModel>().index;
     return GestureDetector(
-      onVerticalDragUpdate: onVerticalDragUpdate,
+      onVerticalDragUpdate: _calendarController.view == CalendarView.month
+          ? onVerticalDragUpdate
+          : null,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: SafeArea(
@@ -367,6 +367,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onViewChanged: onViewChanged,
                   headerStyle: CalendarHeaderStyle(
                     textStyle: TextStyle(
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color:
                             isDarkMode(context) ? Colors.white : Colors.black),
@@ -384,19 +385,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   selectionDecoration:
                       const BoxDecoration(color: Colors.transparent),
                   view: CalendarView.month,
-                  allowedViews: moreFeatures
-                      ? [
-                          CalendarView.month,
-                          CalendarView.week,
-                          CalendarView.day,
-                          CalendarView.timelineDay,
-                          CalendarView.timelineWeek,
-                        ]
-                      : null,
                   cellBorderColor: Colors.transparent,
                   monthViewSettings: MonthViewSettings(
+                    numberOfWeeksInView: weekNums[weekNumIndex],
                     showTrailingAndLeadingDates: moreFeatures ? true : false,
-                    appointmentDisplayCount: showAgenda ? 3 : 4,
+                    appointmentDisplayCount: showAgenda
+                        ? weekNumIndex == 0
+                            ? 10
+                            : weekNumIndex == 1
+                                ? 8
+                                : weekNumIndex == 2
+                                    ? 4
+                                    : 3
+                        : weekNumIndex == 0
+                            ? 14
+                            : weekNumIndex == 1
+                                ? 10
+                                : weekNumIndex == 2
+                                    ? 7
+                                    : 4,
                     appointmentDisplayMode:
                         MonthAppointmentDisplayMode.appointment,
                   ),
@@ -426,7 +433,7 @@ class _HomeScreenState extends State<HomeScreen> {
     List<Appointment> sortedAppoinmentsOnDate =
         filterEventsByDate(selectedDate, appointmentsOnDate, true) +
             filterEventsByDate(selectedDate, appointmentsOnDate, false);
-    bool showLunar = context.watch<LunarViewModel>().showLunarDate;
+    bool showLunar = context.watch<SettingsItemViewModel>().showLunarDate;
     return Column(
       children: [
         Row(
@@ -482,7 +489,7 @@ class _HomeScreenState extends State<HomeScreen> {
           endIndent: 15,
         ),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.2,
+          height: MediaQuery.of(context).size.height * 0.25,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: ListView.builder(

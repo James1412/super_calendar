@@ -4,7 +4,7 @@ import 'package:super_calendar/features/settings/view_models/more_feature_provid
 import 'package:super_calendar/features/calendar/view_models/data_source_vm.dart';
 import 'package:super_calendar/features/settings/view_models/dark_mode_provider.dart';
 import 'package:super_calendar/features/navigation/bottom_navigation_screen.dart';
-import 'package:super_calendar/features/settings/view_models/lunar_vm.dart';
+import 'package:super_calendar/features/settings/view_models/settings_items_vm.dart';
 import 'package:super_calendar/utils.dart';
 
 void main() {
@@ -22,7 +22,7 @@ void main() {
           create: (context) => DataSourceViewModel(),
         ),
         ChangeNotifierProvider(
-          create: (context) => LunarViewModel(),
+          create: (context) => SettingsItemViewModel(),
         ),
       ],
       child: const SuperCalendarApp(),
