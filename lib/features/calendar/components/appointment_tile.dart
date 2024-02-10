@@ -11,8 +11,12 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 class AppointmentTile extends StatefulWidget {
   final Appointment appointment;
   final Function onRemove;
+  final DateTime selectedDate;
   const AppointmentTile(
-      {super.key, required this.appointment, required this.onRemove});
+      {super.key,
+      required this.appointment,
+      required this.onRemove,
+      required this.selectedDate});
 
   @override
   State<AppointmentTile> createState() => _AppointmentTileState();
@@ -97,9 +101,9 @@ class _AppointmentTileState extends State<AppointmentTile> {
                 borderRadius: BorderRadius.circular(10),
                 onPressed: (value) {
                   widget.onRemove(widget.appointment);
-                  context
-                      .read<DataSourceViewModel>()
-                      .deleteAppoinment(appointment: widget.appointment);
+                  context.read<DataSourceViewModel>().quickDeleteAppoinment(
+                      appointment: widget.appointment,
+                      selectedDate: widget.selectedDate);
                 },
                 icon: FontAwesomeIcons.trash,
               ),

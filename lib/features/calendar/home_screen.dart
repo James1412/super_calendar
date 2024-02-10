@@ -63,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Widget monthCellBuilder(
+  MonthCell monthCellBuilder(
       BuildContext context, MonthCellDetails details, bool moreFeatures) {
     int mid = details.visibleDates.length ~/ 2.toInt();
     DateTime midDate = details.visibleDates[0].add(Duration(days: mid));
@@ -216,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               CupertinoListTile(
                 title: Text(
-                  "Add time?",
+                  "At specific time?",
                   style: TextStyle(
                       color: isDarkMode(context) ? Colors.white : Colors.black),
                 ),
@@ -396,10 +396,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   cellBorderColor: Colors.transparent,
                   monthViewSettings: MonthViewSettings(
                     showTrailingAndLeadingDates: moreFeatures ? true : false,
-                    appointmentDisplayCount: 4,
-                    appointmentDisplayMode: showAgenda
-                        ? MonthAppointmentDisplayMode.indicator
-                        : MonthAppointmentDisplayMode.appointment,
+                    appointmentDisplayCount: showAgenda ? 3 : 4,
+                    appointmentDisplayMode:
+                        MonthAppointmentDisplayMode.appointment,
                   ),
                   monthCellBuilder: (context, details) =>
                       monthCellBuilder(context, details, moreFeatures),
@@ -453,7 +452,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       _calendarController.displayDate = DateTime.now();
                       _calendarController.selectedDate = DateTime.now();
                       selectedDate = DateTime.now();
-                      selectedDate = DateTime.now();
                       setState(() {});
                     },
                     child: const TodayButton(),
@@ -484,7 +482,7 @@ class _HomeScreenState extends State<HomeScreen> {
           endIndent: 15,
         ),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.35,
+          height: MediaQuery.of(context).size.height * 0.2,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: ListView.builder(
@@ -492,6 +490,7 @@ class _HomeScreenState extends State<HomeScreen> {
               itemBuilder: (context, index) => AppointmentTile(
                 onRemove: removeAppointment,
                 appointment: sortedAppoinmentsOnDate[index],
+                selectedDate: selectedDate,
               ),
             ),
           ),

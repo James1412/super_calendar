@@ -75,10 +75,44 @@ class DataSourceViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteAppoinment({required Appointment appointment}) {
-    dataSource.removeAt(
-        dataSource.indexWhere((element) => element.id == appointment.id));
+  void changeAppointmentTime(
+      {required Appointment appointment,
+      required DateTime startTime,
+      required DateTime endTime,
+      required bool isAllDay}) {
+    var newAppointment = appointment;
+    if (isAllDay) {
+      newAppointment = appointment..isAllDay = isAllDay;
+    } else {
+      newAppointment = appointment
+        ..startTime = startTime
+        ..endTime = endTime
+        ..isAllDay = isAllDay;
+    }
+    dataSource[dataSource.indexWhere((element) => element == appointment)] =
+        newAppointment;
+    notifyListeners();
+  }
 
+  void quickDeleteAppoinment(
+      {required Appointment appointment, required DateTime selectedDate}) {
+    if (appointment.recurrenceRule != null &&
+        appointment.recurrenceRule != '') {
+      var monthNum = selectedDate.month == 10 ||
+              selectedDate.month == 11 ||
+              selectedDate.month == 12
+          ? selectedDate.month
+          : "0${selectedDate.month}";
+      String untilText =
+          ";UNTIL=${selectedDate.year}$monthNum${selectedDate.day - 1}";
+      dataSource[dataSource
+              .indexWhere((element) => element.id == appointment.id)] =
+          dataSource.where((element) => element.id == appointment.id).first
+            ..recurrenceRule = appointment.recurrenceRule! + untilText;
+    } else {
+      dataSource.removeAt(
+          dataSource.indexWhere((element) => element.id == appointment.id));
+    }
     notifyListeners();
   }
 }
