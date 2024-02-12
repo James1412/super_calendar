@@ -384,7 +384,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     bool moreFeatures = context.watch<MoreFeatures>().moreFeatures;
     List weekNums = context.watch<SettingsItemViewModel>().indexAndWeekNumList;
-    int weekNumIndex = context.watch<SettingsItemViewModel>().index;
+    int weekNumIndex = context.watch<SettingsItemViewModel>().weekNumIndex;
     return GestureDetector(
       onVerticalDragUpdate: _calendarController.view == CalendarView.month
           ? onVerticalDragUpdate
@@ -439,7 +439,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ? 7
                                     : 4,
                     appointmentDisplayMode:
-                        MonthAppointmentDisplayMode.appointment,
+                        context.read<SettingsItemViewModel>().eventViewIndex ==
+                                0
+                            ? MonthAppointmentDisplayMode.appointment
+                            : MonthAppointmentDisplayMode.indicator,
                   ),
                   monthCellBuilder: (context, details) =>
                       monthCellBuilder(context, details, moreFeatures),

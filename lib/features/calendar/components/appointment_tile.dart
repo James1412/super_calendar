@@ -169,152 +169,180 @@ class _AppointmentTileState extends State<AppointmentTile> {
                     if (Platform.isIOS) {
                       HapticFeedback.lightImpact();
                     }
+                    bool isTimeTap = false;
                     showDialog(
                       context: context,
                       builder: (context) => StatefulBuilder(
                         builder: (context, setState) => Dialog(
                           child: Container(
-                            height: widget.appointment.isAllDay ? 150 : 300,
+                            height: widget.appointment.isAllDay
+                                ? 150
+                                : isTimeTap
+                                    ? 400
+                                    : 200,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Column(
-                                mainAxisAlignment: widget.appointment.isAllDay
-                                    ? MainAxisAlignment.center
-                                    : MainAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    const Text("All day"),
+                                    Checkbox(
+                                      activeColor:
+                                          Theme.of(context).primaryColor,
+                                      value: widget.appointment.isAllDay,
+                                      onChanged: (val) {
+                                        context
+                                            .read<DataSourceViewModel>()
+                                            .setAllDay(
+                                                appointment: widget.appointment,
+                                                value: val!);
+                                        setState(() {});
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    const Text("Repeat"),
+                                    Checkbox(
+                                      activeColor:
+                                          Theme.of(context).primaryColor,
+                                      value:
+                                          widget.appointment.recurrenceRule !=
+                                              null,
+                                      onChanged: (val) {},
+                                    ),
+                                  ],
+                                ),
+                                if (!widget.appointment.isAllDay)
+                                  Column(
                                     children: [
-                                      const Text("All day"),
-                                      Checkbox(
-                                        activeColor:
-                                            Theme.of(context).primaryColor,
-                                        value: widget.appointment.isAllDay,
-                                        onChanged: (val) {
-                                          context
-                                              .read<DataSourceViewModel>()
-                                              .setAllDay(
-                                                  appointment:
-                                                      widget.appointment,
-                                                  value: val!);
-                                          setState(() {});
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      const Text("Repeat"),
-                                      Checkbox(
-                                        activeColor:
-                                            Theme.of(context).primaryColor,
-                                        value:
-                                            widget.appointment.recurrenceRule !=
-                                                null,
-                                        onChanged: (val) {},
-                                      ),
-                                    ],
-                                  ),
-                                  if (!widget.appointment.isAllDay)
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              "Start time",
-                                              style: TextStyle(
-                                                color: Colors.grey,
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const Text(
+                                                "Start time",
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                ),
                                               ),
-                                            ),
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.only(top: 3),
-                                              height: 40,
-                                              width: 120,
-                                              child: TextField(
-                                                readOnly: true,
-                                                decoration: InputDecoration(
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  focusedBorder:
-                                                      OutlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: Theme.of(context)
-                                                            .primaryColor),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
+                                              Container(
+                                                padding: const EdgeInsets.only(
+                                                    top: 3),
+                                                height: 40,
+                                                width: 120,
+                                                child: TextField(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      isTimeTap = true;
+                                                    });
+                                                  },
+                                                  readOnly: true,
+                                                  decoration: InputDecoration(
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    focusedBorder:
+                                                        OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .primaryColor),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
+                                            ],
+                                          ),
+                                          const Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 15.0,
+                                                right: 15.0,
+                                                top: 25.0),
+                                            child: FaIcon(
+                                              FontAwesomeIcons.arrowRight,
+                                              color: Colors.grey,
+                                              size: 20,
                                             ),
-                                          ],
-                                        ),
-                                        const Padding(
-                                          padding: EdgeInsets.only(
-                                              left: 15.0,
-                                              right: 15.0,
-                                              top: 25.0),
-                                          child: FaIcon(
-                                            FontAwesomeIcons.arrowRight,
-                                            color: Colors.grey,
-                                            size: 20,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const Text(
+                                                "End time",
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                              Container(
+                                                padding: const EdgeInsets.only(
+                                                    top: 3),
+                                                height: 40,
+                                                width: 120,
+                                                child: TextField(
+                                                  readOnly: true,
+                                                  decoration: InputDecoration(
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    focusedBorder:
+                                                        OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .primaryColor),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      if (isTimeTap)
+                                        SizedBox(
+                                          height: 200,
+                                          width: double.maxFinite,
+                                          child: CupertinoDatePicker(
+                                            initialDateTime:
+                                                widget.appointment.startTime,
+                                            onDateTimeChanged: (date) {
+                                              setState(() {});
+                                            },
+                                            mode: CupertinoDatePickerMode
+                                                .dateAndTime,
                                           ),
                                         ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              "End time",
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.only(top: 3),
-                                              height: 40,
-                                              width: 120,
-                                              child: TextField(
-                                                readOnly: true,
-                                                decoration: InputDecoration(
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  focusedBorder:
-                                                      OutlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: Theme.of(context)
-                                                            .primaryColor),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                ]),
+                                    ],
+                                  ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

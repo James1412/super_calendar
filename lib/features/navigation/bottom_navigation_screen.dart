@@ -44,11 +44,11 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen>
       resizeToAvoidBottomInset: false,
       body: screens[index],
       bottomNavigationBar: BottomAppBar(
-        height: 55,
+        height: 50,
         color: Colors.transparent,
         shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
-        padding: const EdgeInsets.only(left: 20, right: 20, top: 5),
+        padding: const EdgeInsets.only(left: 20, right: 20, top: 0),
         child: Container(
           decoration: BoxDecoration(
             color: isDarkMode(context) ? const Color(0xff121212) : Colors.white,

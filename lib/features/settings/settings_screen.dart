@@ -87,7 +87,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                       animateMuscle = true;
                     });
                   } else {
-                    context.read<SettingsItemViewModel>().index = 3;
+                    context.read<SettingsItemViewModel>().weekNumIndex = 3;
                     setState(() {
                       animateMuscle = false;
                     });
@@ -110,8 +110,9 @@ class _SettingsScreenState extends State<SettingsScreen>
                       useMagnifier: true,
                       itemExtent: 32.0,
                       scrollController: FixedExtentScrollController(
-                          initialItem:
-                              context.watch<SettingsItemViewModel>().index),
+                          initialItem: context
+                              .watch<SettingsItemViewModel>()
+                              .weekNumIndex),
                       onSelectedItemChanged: (value) {
                         setState(() {
                           context
@@ -147,12 +148,59 @@ class _SettingsScreenState extends State<SettingsScreen>
                   context
                       .watch<SettingsItemViewModel>()
                       .indexAndWeekNumList[
-                          context.watch<SettingsItemViewModel>().index]
+                          context.watch<SettingsItemViewModel>().weekNumIndex]
                       .toString(),
                   style: const TextStyle(fontSize: 14),
                 ),
               ),
             ),
+          InkWell(
+            onTap: () {
+              showCupertinoModalPopup(
+                context: context,
+                builder: (context) => SizedBox(
+                  height: 200,
+                  child: CupertinoPicker(
+                    backgroundColor: Colors.white,
+                    squeeze: 1.2,
+                    magnification: 1.22,
+                    useMagnifier: true,
+                    itemExtent: 32.0,
+                    scrollController: FixedExtentScrollController(
+                        initialItem: context
+                            .watch<SettingsItemViewModel>()
+                            .eventViewIndex),
+                    onSelectedItemChanged: (value) => context
+                        .read<SettingsItemViewModel>()
+                        .setEventView(value),
+                    children: const [
+                      Center(
+                        child: Text(
+                          "list",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                      Center(
+                        child: Text(
+                          "indicator",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+            child: ListTile(
+              title: const Text("Event view"),
+              trailing: Text(
+                context.watch<SettingsItemViewModel>().eventViewIndex == 0
+                    ? "list"
+                    : "indicator",
+                style: const TextStyle(fontSize: 14),
+              ),
+            ),
+          ),
           SwitchListTile(
             activeColor: Theme.of(context).primaryColor,
             inactiveThumbColor: Colors.grey,

@@ -47,7 +47,7 @@ class MonthCell extends StatelessWidget {
               details.date.day.toString(),
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 17,
+                fontSize: 16,
                 fontWeight: FontWeight.w900,
                 color: isToday
                     ? Colors.white
