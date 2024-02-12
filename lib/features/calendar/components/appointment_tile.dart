@@ -137,7 +137,7 @@ class _AppointmentTileState extends State<AppointmentTile> {
                       ),
                     ),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.4,
+                      width: MediaQuery.of(context).size.width * 0.5,
                       child: Text(
                         widget.appointment.subject,
                         style: TextStyle(
@@ -146,6 +146,7 @@ class _AppointmentTileState extends State<AppointmentTile> {
                           color:
                               isDarkMode(context) ? Colors.white : Colors.black,
                         ),
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),

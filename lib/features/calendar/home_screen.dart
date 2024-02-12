@@ -157,14 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
       selectedDate = getOnlyDate(calendarTapDetails.date!);
       setState(() {
         appointmentsOnDate =
-            Provider.of<DataSourceViewModel>(context, listen: false)
-                .dataSource
-                .where((element) =>
-                    (element.startTime.isBefore(selectedDate) ||
-                        element.startTime.isAtSameMomentAs(selectedDate)) &&
-                    (element.endTime.isAfter(selectedDate) ||
-                        element.endTime.isAtSameMomentAs(selectedDate)))
-                .toList();
+            calendarTapDetails.appointments!.cast<Appointment>();
       });
     }
   }
@@ -480,14 +473,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               context,
                               listen: false)
                           .dataSource
-                          .where((element) =>
-                              (element.startTime.isBefore(selectedDate) ||
-                                  element.startTime
-                                      .isAtSameMomentAs(selectedDate)) &&
-                              (element.endTime.isAfter(selectedDate) ||
-                                  element.endTime
-                                      .isAtSameMomentAs(selectedDate)))
-                          .toList();
+                          .where((element) {
+                        DateTime start = getOnlyDate(element.startTime);
+                        DateTime end = getOnlyDate(element.endTime);
+                        return (start.isBefore(selectedDate) ||
+                                start.isAtSameMomentAs(selectedDate)) &&
+                            (end.isAfter(selectedDate) ||
+                                end.isAtSameMomentAs(selectedDate));
+                      }).toList();
                       setState(() {});
                     },
                     child: const TodayButton(),
