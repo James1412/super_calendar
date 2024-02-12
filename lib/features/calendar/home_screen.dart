@@ -133,24 +133,26 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ));
-    }
-    if (calendarTapDetails.targetElement == CalendarElement.calendarCell &&
-        _calendarController.view == CalendarView.month) {
+    } else if (calendarTapDetails.targetElement ==
+        CalendarElement.calendarCell) {
       if (Platform.isIOS) {
         HapticFeedback.lightImpact();
       }
       if (!showAgenda) {
         showAgenda = !showAgenda;
       }
+      selectedDate = getOnlyDate(calendarTapDetails.date!);
       setState(() {
         appointmentsOnDate =
-            calendarTapDetails.appointments!.cast<Appointment>();
+            Provider.of<DataSourceViewModel>(context, listen: false)
+                .dataSource
+                .where((element) =>
+                    (element.startTime.isBefore(selectedDate) ||
+                        element.startTime.isAtSameMomentAs(selectedDate)) &&
+                    (element.endTime.isAfter(selectedDate) ||
+                        element.endTime.isAtSameMomentAs(selectedDate)))
+                .toList();
       });
-      selectedDate = calendarTapDetails.date!;
-      setState(() {});
-    } else if (calendarTapDetails.targetElement ==
-        CalendarElement.appointment) {
-      //TODO: Weekly view appointments
     }
   }
 
@@ -456,9 +458,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (!isToday)
                   GestureDetector(
                     onTap: () {
-                      _calendarController.displayDate = DateTime.now();
-                      _calendarController.selectedDate = DateTime.now();
-                      selectedDate = DateTime.now();
+                      _calendarController.displayDate =
+                          getOnlyDate(DateTime.now());
+                      _calendarController.selectedDate =
+                          getOnlyDate(DateTime.now());
+                      selectedDate = getOnlyDate(DateTime.now());
+                      appointmentsOnDate = Provider.of<DataSourceViewModel>(
+                              context,
+                              listen: false)
+                          .dataSource
+                          .where((element) =>
+                              (element.startTime.isBefore(selectedDate) ||
+                                  element.startTime
+                                      .isAtSameMomentAs(selectedDate)) &&
+                              (element.endTime.isAfter(selectedDate) ||
+                                  element.endTime
+                                      .isAtSameMomentAs(selectedDate)))
+                          .toList();
                       setState(() {});
                     },
                     child: const TodayButton(),
