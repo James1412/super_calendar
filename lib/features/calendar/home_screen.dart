@@ -187,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
     bool repeat = false;
     String? dropDownValue;
 
-    showCupertinoDialog(
+    await showCupertinoDialog(
       context: context,
       builder: (context) => StatefulBuilder(builder: (context, setState) {
         return CupertinoAlertDialog(
@@ -333,7 +333,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       text: _quickAddController.text,
                       repeat: repeat ?? "",
                     );
-
+                selectedTime = null;
                 _quickAddController.clear();
                 Navigator.pop(context);
               },
@@ -343,6 +343,18 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }),
     );
+    selectedDate = calendarLongPressDetails.date!;
+    appointmentsOnDate =
+        Provider.of<DataSourceViewModel>(context, listen: false)
+            .dataSource
+            .where((element) {
+      DateTime start = getOnlyDate(element.startTime);
+      DateTime end = getOnlyDate(element.endTime);
+      return (start.isBefore(selectedDate) ||
+              start.isAtSameMomentAs(selectedDate)) &&
+          (end.isAfter(selectedDate) || end.isAtSameMomentAs(selectedDate));
+    }).toList();
+    setState(() {});
   }
 
   bool showAgenda = false;
