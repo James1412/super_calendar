@@ -127,10 +127,16 @@ class _SettingsScreenState extends State<SettingsScreen>
                                     .length;
                             i++)
                           Center(
-                            child: Text(context
-                                .watch<SettingsItemViewModel>()
-                                .indexAndWeekNumList[i]
-                                .toString()),
+                            child: Text(
+                              context
+                                  .watch<SettingsItemViewModel>()
+                                  .indexAndWeekNumList[i]
+                                  .toString(),
+                              style: TextStyle(
+                                  color: isDarkMode(context)
+                                      ? Colors.black
+                                      : Colors.white),
+                            ),
                           ),
                       ],
                     ),

@@ -108,11 +108,24 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.only(right: 15.0, top: 15),
                       child: GestureDetector(
                         onTap: () {
-                          _calendarController.displayDate = DateTime.now();
-                          _calendarController.selectedDate = DateTime.now();
-                          setState(() {
-                            selectedDate = DateTime.now();
-                          });
+                          _calendarController.displayDate =
+                              getOnlyDate(DateTime.now());
+                          _calendarController.selectedDate =
+                              getOnlyDate(DateTime.now());
+                          selectedDate = getOnlyDate(DateTime.now());
+                          appointmentsOnDate = Provider.of<DataSourceViewModel>(
+                                  context,
+                                  listen: false)
+                              .dataSource
+                              .where((element) =>
+                                  (element.startTime.isBefore(selectedDate) ||
+                                      element.startTime
+                                          .isAtSameMomentAs(selectedDate)) &&
+                                  (element.endTime.isAfter(selectedDate) ||
+                                      element.endTime
+                                          .isAtSameMomentAs(selectedDate)))
+                              .toList();
+                          setState(() {});
                           Navigator.pop(context);
                         },
                         child: const TodayButton(),
