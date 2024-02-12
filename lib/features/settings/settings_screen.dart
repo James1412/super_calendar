@@ -87,6 +87,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                       animateMuscle = true;
                     });
                   } else {
+                    context.read<SettingsItemViewModel>().index = 3;
                     setState(() {
                       animateMuscle = false;
                     });
@@ -132,10 +133,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                                   .watch<SettingsItemViewModel>()
                                   .indexAndWeekNumList[i]
                                   .toString(),
-                              style: TextStyle(
-                                  color: isDarkMode(context)
-                                      ? Colors.black
-                                      : Colors.white),
+                              style: const TextStyle(color: Colors.black),
                             ),
                           ),
                       ],

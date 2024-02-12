@@ -137,7 +137,7 @@ class _AppointmentTileState extends State<AppointmentTile> {
                       ),
                     ),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.5,
+                      width: MediaQuery.of(context).size.width * 0.45,
                       child: Text(
                         widget.appointment.subject,
                         style: TextStyle(

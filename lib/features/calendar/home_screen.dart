@@ -304,7 +304,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         calendarLongPressDetails.date!,
                         calendarLongPressDetails.date!);
                   case ('week'):
-                    print(calendarLongPressDetails.date!);
                     repeat =
                         'FREQ=WEEKLY;BYDAY=${getDay(calendarLongPressDetails.date!)};INTERVAL=1';
                   case ('month'):
