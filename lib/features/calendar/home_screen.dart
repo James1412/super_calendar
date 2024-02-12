@@ -405,8 +405,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         fontWeight: FontWeight.bold,
                         color:
                             isDarkMode(context) ? Colors.white : Colors.black),
-                    textAlign:
-                        !moreFeatures ? TextAlign.center : TextAlign.start,
+                    textAlign: TextAlign.center,
                   ),
                   viewHeaderStyle: ViewHeaderStyle(
                     dayTextStyle: TextStyle(
@@ -415,7 +414,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             : Colors.black),
                   ),
                   controller: _calendarController,
-                  showNavigationArrow: moreFeatures ? true : false,
                   selectionDecoration:
                       const BoxDecoration(color: Colors.transparent),
                   view: CalendarView.month,
@@ -552,11 +550,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 onRemove: removeAppointment,
                 appointment: sortedAppoinmentsOnDate[index],
                 selectedDate: selectedDate,
+                setStateHome: setStatehome,
               ),
             ),
           ),
         ),
       ],
     );
+  }
+
+  void setStatehome() {
+    setState(() {});
   }
 }

@@ -77,7 +77,10 @@ class DataSourceViewModel extends ChangeNotifier {
   }
 
   void setAllDay({required Appointment appointment, required bool value}) {
-    final newAppointment = appointment..isAllDay = value;
+    final newAppointment = appointment
+      ..isAllDay = value
+      ..startTime = getOnlyDate(appointment.startTime)
+      ..endTime = getOnlyDate(appointment.endTime);
     dataSource[
             dataSource.indexWhere((element) => element.id == appointment.id)] =
         newAppointment;
