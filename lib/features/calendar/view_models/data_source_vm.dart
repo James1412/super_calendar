@@ -103,8 +103,10 @@ class DataSourceViewModel extends ChangeNotifier {
               selectedDate.month == 12
           ? selectedDate.month
           : "0${selectedDate.month}";
-      String untilText =
-          ";UNTIL=${selectedDate.year}$monthNum${selectedDate.day - 1}";
+      var dayNum = selectedDate.day.toString().length == 1
+          ? "0${selectedDate.day - 1}"
+          : selectedDate.day - 1;
+      String untilText = ";UNTIL=${selectedDate.year}$monthNum$dayNum";
       dataSource[dataSource
               .indexWhere((element) => element.id == appointment.id)] =
           dataSource.where((element) => element.id == appointment.id).first

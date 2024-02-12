@@ -174,19 +174,8 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  final TextEditingController _quickAddController = TextEditingController();
-  DateTime? selectedTime;
-  void onLongPress(CalendarLongPressDetails calendarLongPressDetails) async {
-    if (calendarLongPressDetails.targetElement ==
-        CalendarElement.calendarCell) {
-      if (Platform.isIOS) {
-        HapticFeedback.mediumImpact();
-      }
-    }
-    bool addTime = false;
-    bool repeat = false;
-    String? dropDownValue;
-
+  Future<void> quickAddEvent(CalendarLongPressDetails calendarLongPressDetails,
+      bool addTime, bool repeat, String? dropDownValue) async {
     await showCupertinoDialog(
       context: context,
       builder: (context) => StatefulBuilder(builder: (context, setState) {
@@ -315,6 +304,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         calendarLongPressDetails.date!,
                         calendarLongPressDetails.date!);
                   case ('week'):
+                    print(calendarLongPressDetails.date!);
                     repeat =
                         'FREQ=WEEKLY;BYDAY=${getDay(calendarLongPressDetails.date!)};INTERVAL=1';
                   case ('month'):
@@ -343,7 +333,27 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }),
     );
+  }
+
+  final TextEditingController _quickAddController = TextEditingController();
+  DateTime? selectedTime;
+  void onLongPress(CalendarLongPressDetails calendarLongPressDetails) async {
+    if (calendarLongPressDetails.targetElement ==
+        CalendarElement.calendarCell) {
+      if (Platform.isIOS) {
+        HapticFeedback.mediumImpact();
+      }
+    }
+    bool addTime = false;
+    bool repeat = false;
+    String? dropDownValue;
+
+    // TODO: not in feature rich mode
+    await quickAddEvent(
+        calendarLongPressDetails, addTime, repeat, dropDownValue);
+    // TODO: add here the feature rich mode
     selectedDate = calendarLongPressDetails.date!;
+    if (!mounted) return;
     appointmentsOnDate =
         Provider.of<DataSourceViewModel>(context, listen: false)
             .dataSource
