@@ -108,6 +108,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.only(right: 15.0, top: 15),
                       child: GestureDetector(
                         onTap: () {
+                          if (Platform.isIOS) {
+                            HapticFeedback.lightImpact();
+                          }
                           _calendarController.displayDate =
                               getOnlyDate(DateTime.now());
                           _calendarController.selectedDate =
@@ -214,6 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: isDarkMode(context) ? Colors.white : Colors.black),
                 ),
                 trailing: CupertinoCheckbox(
+                  activeColor: Theme.of(context).primaryColor,
                   value: addTime,
                   onChanged: (value) {
                     addTime = value!;
@@ -241,6 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: isDarkMode(context) ? Colors.white : Colors.black),
                 ),
                 trailing: CupertinoCheckbox(
+                  activeColor: Theme.of(context).primaryColor,
                   value: repeat,
                   onChanged: (value) {
                     repeat = value!;
@@ -485,6 +490,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (!isToday)
                   GestureDetector(
                     onTap: () {
+                      if (Platform.isIOS) {
+                        HapticFeedback.lightImpact();
+                      }
                       _calendarController.displayDate =
                           getOnlyDate(DateTime.now());
                       _calendarController.selectedDate =

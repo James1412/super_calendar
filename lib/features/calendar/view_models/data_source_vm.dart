@@ -70,7 +70,16 @@ class DataSourceViewModel extends ChangeNotifier {
   void changeAppointmentName(
       {required Appointment appointment, required String text}) {
     final newAppointment = appointment..subject = text;
-    dataSource[dataSource.indexWhere((element) => element == appointment)] =
+    dataSource[
+            dataSource.indexWhere((element) => element.id == appointment.id)] =
+        newAppointment;
+    notifyListeners();
+  }
+
+  void setAllDay({required Appointment appointment, required bool value}) {
+    final newAppointment = appointment..isAllDay = value;
+    dataSource[
+            dataSource.indexWhere((element) => element.id == appointment.id)] =
         newAppointment;
     notifyListeners();
   }
@@ -89,7 +98,8 @@ class DataSourceViewModel extends ChangeNotifier {
         ..endTime = endTime
         ..isAllDay = isAllDay;
     }
-    dataSource[dataSource.indexWhere((element) => element == appointment)] =
+    dataSource[
+            dataSource.indexWhere((element) => element.id == appointment.id)] =
         newAppointment;
     notifyListeners();
   }

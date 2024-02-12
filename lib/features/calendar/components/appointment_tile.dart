@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -37,12 +40,18 @@ class _AppointmentTileState extends State<AppointmentTile> {
 
   TextEditingController controller = TextEditingController();
   void onTap(BuildContext context) {
+    if (Platform.isIOS) {
+      HapticFeedback.lightImpact();
+    }
     //When default mode
     if (!Provider.of<MoreFeatures>(context, listen: false).moreFeatures) {
       showCupertinoDialog(
         context: context,
         builder: (context) => CupertinoAlertDialog(
-          title: const Text("Change event"),
+          title: const Text(
+            "Change event name",
+            style: TextStyle(fontWeight: FontWeight.normal),
+          ),
           content: Column(
             children: [
               const SizedBox(
@@ -69,6 +78,9 @@ class _AppointmentTileState extends State<AppointmentTile> {
             ),
             CupertinoDialogAction(
               onPressed: () {
+                if (Platform.isIOS) {
+                  HapticFeedback.lightImpact();
+                }
                 context.read<DataSourceViewModel>().changeAppointmentName(
                     appointment: widget.appointment, text: controller.text);
                 Navigator.pop(context);
@@ -111,7 +123,7 @@ class _AppointmentTileState extends State<AppointmentTile> {
           ),
           child: Container(
             width: double.maxFinite,
-            height: MediaQuery.of(context).size.height * 0.060,
+            height: MediaQuery.of(context).size.height * 0.070,
             decoration: BoxDecoration(
               color: Colors.grey.withOpacity(0.15),
               borderRadius: BorderRadius.circular(10),
@@ -154,43 +166,156 @@ class _AppointmentTileState extends State<AppointmentTile> {
                 ),
                 InkWell(
                   onTap: () {
-                    showCupertinoDialog(
-                      barrierDismissible: true,
+                    if (Platform.isIOS) {
+                      HapticFeedback.lightImpact();
+                    }
+                    showDialog(
                       context: context,
-                      builder: (context) => Dialog(
-                        backgroundColor: Colors.white,
-                        surfaceTintColor: Colors.white,
-                        shape: const BeveledRectangleBorder(),
-                        insetPadding: const EdgeInsets.symmetric(vertical: 200),
-                        child: Column(
-                          children: [
-                            const Text("Change time"),
-                            GestureDetector(
-                              onTap: () {
-                                showCupertinoModalPopup(
-                                  context: context,
-                                  builder: (context) => Container(
-                                    height: 216,
-                                    padding: const EdgeInsets.only(top: 6.0),
-                                    margin: EdgeInsets.only(
-                                      bottom: MediaQuery.of(context)
-                                          .viewInsets
-                                          .bottom,
-                                    ),
-                                    color: CupertinoColors.systemBackground
-                                        .resolveFrom(context),
-                                    child: SafeArea(
-                                      top: false,
-                                      child: CupertinoDatePicker(
-                                        onDateTimeChanged: (value) {},
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: const Text("Change"),
+                      builder: (context) => StatefulBuilder(
+                        builder: (context, setState) => Dialog(
+                          child: Container(
+                            height: widget.appointment.isAllDay ? 150 : 300,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                          ],
+                            child: Column(
+                                mainAxisAlignment: widget.appointment.isAllDay
+                                    ? MainAxisAlignment.center
+                                    : MainAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      const Text("All day"),
+                                      Checkbox(
+                                        activeColor:
+                                            Theme.of(context).primaryColor,
+                                        value: widget.appointment.isAllDay,
+                                        onChanged: (val) {
+                                          context
+                                              .read<DataSourceViewModel>()
+                                              .setAllDay(
+                                                  appointment:
+                                                      widget.appointment,
+                                                  value: val!);
+                                          setState(() {});
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      const Text("Repeat"),
+                                      Checkbox(
+                                        activeColor:
+                                            Theme.of(context).primaryColor,
+                                        value:
+                                            widget.appointment.recurrenceRule !=
+                                                null,
+                                        onChanged: (val) {},
+                                      ),
+                                    ],
+                                  ),
+                                  if (!widget.appointment.isAllDay)
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(
+                                              "Start time",
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.only(top: 3),
+                                              height: 40,
+                                              width: 120,
+                                              child: TextField(
+                                                readOnly: true,
+                                                decoration: InputDecoration(
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  focusedBorder:
+                                                      OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: Theme.of(context)
+                                                            .primaryColor),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 15.0,
+                                              right: 15.0,
+                                              top: 25.0),
+                                          child: FaIcon(
+                                            FontAwesomeIcons.arrowRight,
+                                            color: Colors.grey,
+                                            size: 20,
+                                          ),
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(
+                                              "End time",
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.only(top: 3),
+                                              height: 40,
+                                              width: 120,
+                                              child: TextField(
+                                                readOnly: true,
+                                                decoration: InputDecoration(
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  focusedBorder:
+                                                      OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: Theme.of(context)
+                                                            .primaryColor),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                ]),
+                          ),
                         ),
                       ),
                     );
@@ -222,12 +347,12 @@ class _AppointmentTileState extends State<AppointmentTile> {
       return 'all-day';
     } else if (getOnlyDate(widget.appointment.startTime) !=
         getOnlyDate(widget.appointment.endTime)) {
-      return "${getThreeCharDay(widget.appointment.startTime)} ${getOnlyTime(widget.appointment.startTime)} \n - ${getThreeCharDay(widget.appointment.endTime)} ${getOnlyTime(widget.appointment.endTime)}";
+      return "${getThreeCharDay(widget.appointment.startTime)} ${getOnlyTime(widget.appointment.startTime)} \n → ${getThreeCharDay(widget.appointment.endTime)} ${getOnlyTime(widget.appointment.endTime)}";
     } else if (getOnlyTime(widget.appointment.startTime) ==
         getOnlyTime(widget.appointment.endTime)) {
       return getOnlyTime(widget.appointment.startTime);
     }
 
-    return "${getOnlyTime(widget.appointment.startTime)} - ${getOnlyTime(widget.appointment.endTime)}";
+    return "${getOnlyTime(widget.appointment.startTime)} \n → ${getOnlyTime(widget.appointment.endTime)}";
   }
 }
