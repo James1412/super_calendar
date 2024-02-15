@@ -249,7 +249,10 @@ class _SettingsScreenState extends State<SettingsScreen>
                     children: countries.keys
                         .map(
                           (e) => Center(
-                            child: Text(e),
+                            child: Text(
+                              e,
+                              style: const TextStyle(color: Colors.black),
+                            ),
                           ),
                         )
                         .toList(),
