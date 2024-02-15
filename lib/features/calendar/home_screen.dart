@@ -9,6 +9,7 @@ import 'package:lunar/calendar/Lunar.dart';
 import 'package:lunar/calendar/Solar.dart';
 import 'package:provider/provider.dart';
 import 'package:super_calendar/features/calendar/components/today_button.dart';
+import 'package:super_calendar/features/settings/services/get_holiday_service.dart';
 import 'package:super_calendar/features/settings/settings_screen.dart';
 import 'package:super_calendar/features/settings/view_models/dark_mode_provider.dart';
 import 'package:super_calendar/features/settings/view_models/settings_items_vm.dart';
@@ -35,6 +36,24 @@ class _HomeScreenState extends State<HomeScreen> {
     _quickAddController.dispose();
     _calendarController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Check if holidays exist
+    List? holidays = Provider.of<DataSourceViewModel>(context, listen: false)
+        .dataSource
+        .where((element) => element.notes == SettingsItemViewModel.holidayText)
+        .toList();
+    if (holidays.isEmpty) {
+      return;
+    }
+    // if exists, check whether the holidays are in current year
+    int holidayYear = holidays.first.startTime.year;
+    if (holidayYear != DateTime.now().year) {
+      callHolidayApi(context, mounted);
+    }
   }
 
   MonthCell monthCellBuilder(

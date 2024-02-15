@@ -36,7 +36,7 @@ class SettingsItemViewModel extends ChangeNotifier {
 
   // Holiday
   int holidayIndex = 0;
-  List<HolidayModel> holidays = [];
+
   static String holidayText = "flutter-super-calendar-holiday";
   void setHolidayIndex(int index) {
     holidayIndex = index;
@@ -44,8 +44,14 @@ class SettingsItemViewModel extends ChangeNotifier {
   }
 
   void addHolidays(List<HolidayModel> holidayModels, BuildContext context) {
-    holidays = holidayModels;
-    for (HolidayModel holiday in holidays) {
+    // Remove pre-existing holidays
+    final dataSource =
+        Provider.of<DataSourceViewModel>(context, listen: false).dataSource;
+    dataSource.removeWhere(
+        (element) => element.notes == SettingsItemViewModel.holidayText);
+
+    // Then add new holidays
+    for (HolidayModel holiday in holidayModels) {
       int year = int.parse(holiday.date.split('-')[0]);
       int month = int.parse(holiday.date.split('-')[1]);
       int day = int.parse(holiday.date.split('-')[2]);
@@ -55,6 +61,7 @@ class SettingsItemViewModel extends ChangeNotifier {
             text: holiday.holidayName,
             context: context,
             holiday: holidayText,
+            color: Colors.red,
           );
     }
     notifyListeners();

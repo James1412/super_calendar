@@ -48,6 +48,7 @@ class DataSourceViewModel extends ChangeNotifier {
     required BuildContext context,
     String? repeat,
     String? holiday,
+    Color? color,
   }) {
     bool isAllDay = false;
     DateTime? from = time;
@@ -61,7 +62,7 @@ class DataSourceViewModel extends ChangeNotifier {
       subject: text,
       startTime: from!,
       endTime: to!,
-      color: Theme.of(context).primaryColor,
+      color: color ?? Theme.of(context).primaryColor,
       isAllDay: isAllDay,
       recurrenceRule: repeat,
       notes: holiday,
@@ -120,22 +121,27 @@ class DataSourceViewModel extends ChangeNotifier {
   }
 
   void quickDeleteAppoinment(
-      {required Appointment appointment, required DateTime selectedDate}) {
-    if (appointment.recurrenceRule != null &&
-        appointment.recurrenceRule != '') {
-      var monthNum = selectedDate.month == 10 ||
-              selectedDate.month == 11 ||
-              selectedDate.month == 12
-          ? selectedDate.month
-          : "0${selectedDate.month}";
-      var dayNum = selectedDate.day.toString().length == 1
-          ? "0${selectedDate.day - 1}"
-          : selectedDate.day - 1;
-      String untilText = ";UNTIL=${selectedDate.year}$monthNum$dayNum";
-      dataSource[dataSource
-              .indexWhere((element) => element.id == appointment.id)] =
-          dataSource.where((element) => element.id == appointment.id).first
-            ..recurrenceRule = appointment.recurrenceRule! + untilText;
+      {required Appointment appointment, DateTime? selectedDate}) {
+    if (selectedDate != null) {
+      if (appointment.recurrenceRule != null &&
+          appointment.recurrenceRule != '') {
+        var monthNum = selectedDate.month == 10 ||
+                selectedDate.month == 11 ||
+                selectedDate.month == 12
+            ? selectedDate.month
+            : "0${selectedDate.month}";
+        var dayNum = selectedDate.day.toString().length == 1
+            ? "0${selectedDate.day - 1}"
+            : selectedDate.day - 1;
+        String untilText = ";UNTIL=${selectedDate.year}$monthNum$dayNum";
+        dataSource[dataSource
+                .indexWhere((element) => element.id == appointment.id)] =
+            dataSource.where((element) => element.id == appointment.id).first
+              ..recurrenceRule = appointment.recurrenceRule! + untilText;
+      } else {
+        dataSource.removeAt(
+            dataSource.indexWhere((element) => element.id == appointment.id));
+      }
     } else {
       dataSource.removeAt(
           dataSource.indexWhere((element) => element.id == appointment.id));

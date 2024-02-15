@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:super_calendar/features/settings/models/holiday_model.dart';
 import 'package:super_calendar/features/settings/services/get_holiday_service.dart';
 import 'package:super_calendar/features/settings/view_models/more_feature_provider.dart';
 import 'package:super_calendar/features/settings/view_models/dark_mode_provider.dart';
@@ -258,20 +257,8 @@ class _SettingsScreenState extends State<SettingsScreen>
                 ),
               );
               // Holiday api call  //
-              if (!mounted ||
-                  Provider.of<SettingsItemViewModel>(context, listen: false)
-                          .holidayIndex ==
-                      0) {
-                return;
-              }
-              List<HolidayModel> holidays = await GetHolidayService()
-                  .fetchHolidays(countries.values.toList()[
-                      Provider.of<SettingsItemViewModel>(context, listen: false)
-                          .holidayIndex]);
               if (!mounted) return;
-              context
-                  .read<SettingsItemViewModel>()
-                  .addHolidays(holidays, context);
+              callHolidayApi(context, mounted);
               // ---------------- //
             },
             child: ListTile(

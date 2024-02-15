@@ -1,7 +1,9 @@
 import 'dart:convert';
-
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:super_calendar/features/settings/models/holiday_model.dart';
+import 'package:super_calendar/features/settings/view_models/settings_items_vm.dart';
 
 Map<String, String> countries = {
   "No Holidays": "",
@@ -137,4 +139,18 @@ class GetHolidayService {
       throw Exception("Failed to load holidays");
     }
   }
+}
+
+Future<void> callHolidayApi(BuildContext context, bool mounted) async {
+  if (!mounted ||
+      Provider.of<SettingsItemViewModel>(context, listen: false).holidayIndex ==
+          0) {
+    return;
+  }
+  List<HolidayModel> holidays = await GetHolidayService().fetchHolidays(
+      countries.values.toList()[
+          Provider.of<SettingsItemViewModel>(context, listen: false)
+              .holidayIndex]);
+  if (!mounted) return;
+  context.read<SettingsItemViewModel>().addHolidays(holidays, context);
 }
