@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -58,29 +59,58 @@ class _AppointmentTileState extends State<AppointmentTile> {
       bool allDay = widget.appointment.isAllDay;
       DateTime startTime = widget.appointment.startTime;
       DateTime endTime = widget.appointment.endTime;
+      Color color = widget.appointment.color;
       showDialog(
         context: context,
         builder: (context) => StatefulBuilder(
           builder: (context, setState) => Dialog(
-            child: Container(
+            shape: ContinuousRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: SizedBox(
               height: allDay
                   ? 250
                   : startTap || endTap
                       ? 600
                       : 400,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
-                      "Change event",
-                      style: TextStyle(
-                          fontWeight: FontWeight.normal, fontSize: 20),
+                    Row(
+                      children: [
+                        const SizedBox(
+                          height: 30,
+                          width: 30,
+                        ),
+                        const Spacer(),
+                        const Text(
+                          "Change event",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
+                        ),
+                        const Spacer(),
+                        InkWell(
+                          onTap: () async {
+                            Color newColor = await showColorPickerDialog(
+                              context,
+                              widget.appointment.color,
+                            );
+                            if (!mounted) return;
+                            color = newColor;
+                            setState(() {});
+                          },
+                          child: Container(
+                            height: 30,
+                            width: 30,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: color,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(
                       height: 20,
@@ -244,17 +274,24 @@ class _AppointmentTileState extends State<AppointmentTile> {
                                 startTime: startTime,
                                 endTime: endTime,
                                 isAllDay: allDay);
-                        widget.setStateHome();
                         context
                             .read<DataSourceViewModel>()
                             .changeAppointmentName(
                                 appointment: widget.appointment,
                                 text: controller.text);
+                        context
+                            .read<DataSourceViewModel>()
+                            .changeAppointmentColor(
+                                appointment: widget.appointment, color: color);
+                        widget.setStateHome();
                         Navigator.pop(context);
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
+                          border: Border.all(
+                              color: isDarkMode(context)
+                                  ? Colors.white
+                                  : Colors.black),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         padding: const EdgeInsets.symmetric(

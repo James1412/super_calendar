@@ -441,7 +441,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ? 10
                                     : weekNumIndex == 2
                                         ? 7
-                                        : 4,
+                                        : 5,
                         appointmentDisplayMode: context
                                     .read<SettingsItemViewModel>()
                                     .eventViewIndex ==

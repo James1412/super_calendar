@@ -42,6 +42,11 @@ class SuperCalendarApp extends StatelessWidget {
         primaryColor: Colors.orange,
         scaffoldBackgroundColor: Colors.white,
         textTheme: Typography.blackCupertino,
+        dialogTheme: const DialogTheme(
+          surfaceTintColor: Colors.white,
+          shadowColor: Colors.white,
+          backgroundColor: Colors.white,
+        ),
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
           shadowColor: Colors.white,
@@ -49,6 +54,11 @@ class SuperCalendarApp extends StatelessWidget {
         ),
       ),
       darkTheme: ThemeData(
+        dialogTheme: const DialogTheme(
+          surfaceTintColor: Color(0xff121212),
+          shadowColor: Color(0xff121212),
+          backgroundColor: Color(0xff121212),
+        ),
         brightness: Brightness.dark,
         primaryColor: Colors.orange,
         textTheme: Typography.whiteCupertino,

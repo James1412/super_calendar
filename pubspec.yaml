@@ -46,6 +46,7 @@ dependencies:
   dropdown_button2: ^2.3.9
   day_night_time_picker: ^1.3.0+1
   lunar: ^1.6.1
+  flex_color_picker: ^3.3.0
 
 dev_dependencies:
   flutter_test:

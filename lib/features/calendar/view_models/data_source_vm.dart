@@ -76,6 +76,15 @@ class DataSourceViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void changeAppointmentColor(
+      {required Appointment appointment, required Color color}) {
+    final newAppointment = appointment..color = color;
+    dataSource[
+            dataSource.indexWhere((element) => element.id == appointment.id)] =
+        newAppointment;
+    notifyListeners();
+  }
+
   void setAllDay({required Appointment appointment, required bool value}) {
     final newAppointment = appointment
       ..isAllDay = value
