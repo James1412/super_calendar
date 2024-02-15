@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:animated_emoji/animated_emoji.dart';
+import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -154,6 +155,29 @@ class _SettingsScreenState extends State<SettingsScreen>
                 ),
               ),
             ),
+          InkWell(
+            onTap: () async {
+              Color primaryColor = await showColorPickerDialog(
+                context,
+                Theme.of(context).primaryColor,
+              );
+              if (!mounted) return;
+              context
+                  .read<SettingsItemViewModel>()
+                  .changePrimaryColor(primaryColor);
+            },
+            child: ListTile(
+              title: const Text("Change primary color"),
+              trailing: Container(
+                height: 30,
+                width: 30,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+          ),
           InkWell(
             onTap: () {
               showCupertinoModalPopup(

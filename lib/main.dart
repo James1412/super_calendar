@@ -39,7 +39,7 @@ class SuperCalendarApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.light,
-        primaryColor: Colors.orange,
+        primaryColor: context.watch<SettingsItemViewModel>().primaryColor,
         scaffoldBackgroundColor: Colors.white,
         textTheme: Typography.blackCupertino,
         dialogTheme: const DialogTheme(
@@ -60,7 +60,7 @@ class SuperCalendarApp extends StatelessWidget {
           backgroundColor: Color(0xff121212),
         ),
         brightness: Brightness.dark,
-        primaryColor: Colors.orange,
+        primaryColor: context.watch<SettingsItemViewModel>().primaryColor,
         textTheme: Typography.whiteCupertino,
         scaffoldBackgroundColor: const Color(0xff121212),
         appBarTheme: const AppBarTheme(
