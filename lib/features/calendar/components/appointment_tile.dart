@@ -53,56 +53,226 @@ class _AppointmentTileState extends State<AppointmentTile> {
     }
     //When default mode
     if (!Provider.of<MoreFeatures>(context, listen: false).moreFeatures) {
-      showCupertinoDialog(
+      bool startTap = false;
+      bool endTap = false;
+      bool allDay = widget.appointment.isAllDay;
+      DateTime startTime = widget.appointment.startTime;
+      DateTime endTime = widget.appointment.endTime;
+      showDialog(
         context: context,
-        builder: (context) => CupertinoAlertDialog(
-          title: const Text(
-            "Change event name",
-            style: TextStyle(fontWeight: FontWeight.normal),
-          ),
-          content: Column(
-            children: [
-              const SizedBox(
-                height: 20,
+        builder: (context) => StatefulBuilder(
+          builder: (context, setState) => Dialog(
+            child: Container(
+              height: allDay
+                  ? 250
+                  : startTap || endTap
+                      ? 600
+                      : 400,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
               ),
-              CupertinoTextField(
-                style: TextStyle(
-                    color: isDarkMode(context) ? Colors.white : Colors.black),
-                cursorColor: isDarkMode(context) ? Colors.white : Colors.black,
-                clearButtonMode: OverlayVisibilityMode.editing,
-                controller: controller,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Change event",
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal, fontSize: 20),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    CupertinoTextField(
+                      style: TextStyle(
+                          color: isDarkMode(context)
+                              ? Colors.white
+                              : Colors.black),
+                      cursorColor:
+                          isDarkMode(context) ? Colors.white : Colors.black,
+                      clearButtonMode: OverlayVisibilityMode.editing,
+                      controller: controller,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        const Text("All day"),
+                        Checkbox(
+                          activeColor: Theme.of(context).primaryColor,
+                          value: allDay,
+                          onChanged: (val) {
+                            if (Platform.isIOS) {
+                              HapticFeedback.lightImpact();
+                            }
+                            allDay = !allDay;
+                            setState(() {});
+                          },
+                        ),
+                      ],
+                    ),
+                    if (!allDay)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                        child: Column(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "Start time",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.only(top: 3),
+                                  height: 40,
+                                  width: double.maxFinite,
+                                  child: TextField(
+                                    style: const TextStyle(height: 0.75),
+                                    controller: startTimeController,
+                                    onTap: () {
+                                      setState(() {
+                                        startTap = true;
+                                        endTap = false;
+                                      });
+                                    },
+                                    readOnly: true,
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color:
+                                                Theme.of(context).primaryColor),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.only(top: 15, bottom: 0),
+                              child: FaIcon(
+                                FontAwesomeIcons.arrowDown,
+                                color: Colors.grey,
+                                size: 20,
+                              ),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "End time",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.only(top: 3),
+                                  height: 40,
+                                  width: double.maxFinite,
+                                  child: TextField(
+                                    style: const TextStyle(height: 0.75),
+                                    onTap: () {
+                                      endTap = true;
+                                      startTap = false;
+                                      setState(() {});
+                                    },
+                                    controller: endTimeController,
+                                    readOnly: true,
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color:
+                                                Theme.of(context).primaryColor),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    if ((startTap || endTap) && !allDay)
+                      SizedBox(
+                        height: 200,
+                        width: double.maxFinite,
+                        child: CupertinoDatePicker(
+                          initialDateTime: startTap ? startTime : endTime,
+                          minimumDate: endTap ? startTime : null,
+                          maximumDate: startTap ? endTime : null,
+                          onDateTimeChanged: (date) {
+                            if (startTap) {
+                              startTimeController.text =
+                                  "${date.toString().split(' ')[0]}     ${getOnlyTime(date)}";
+                              startTime = date;
+                            }
+                            if (endTap) {
+                              endTimeController.text =
+                                  "${date.toString().split(' ')[0]}     ${getOnlyTime(date)}";
+                              endTime = date;
+                            }
+                            setState(() {});
+                          },
+                          mode: CupertinoDatePickerMode.dateAndTime,
+                        ),
+                      ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        if (Platform.isIOS) {
+                          HapticFeedback.lightImpact();
+                        }
+                        context.read<DataSourceViewModel>().setAllDay(
+                            appointment: widget.appointment, value: allDay);
+                        context
+                            .read<DataSourceViewModel>()
+                            .changeAppointmentTime(
+                                appointment: widget.appointment,
+                                startTime: startTime,
+                                endTime: endTime,
+                                isAllDay: allDay);
+                        widget.setStateHome();
+                        context
+                            .read<DataSourceViewModel>()
+                            .changeAppointmentName(
+                                appointment: widget.appointment,
+                                text: controller.text);
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 40),
+                        child: const Text(
+                          "Done",
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ],
+            ),
           ),
-          actions: [
-            CupertinoDialogAction(
-              isDefaultAction: true,
-              textStyle: const TextStyle(color: Colors.red),
-              onPressed: () {
-                controller.text = widget.appointment.subject;
-                Navigator.pop(context);
-              },
-              child: const Text("Cancel"),
-            ),
-            CupertinoDialogAction(
-              onPressed: () {
-                if (Platform.isIOS) {
-                  HapticFeedback.lightImpact();
-                }
-                context.read<DataSourceViewModel>().changeAppointmentName(
-                    appointment: widget.appointment, text: controller.text);
-                Navigator.pop(context);
-              },
-              isDefaultAction: true,
-              textStyle: TextStyle(color: Theme.of(context).primaryColor),
-              child: const Text("Apply"),
-            ),
-          ],
         ),
       );
-    } else {
-      //TODO: When more Feature mode
     }
+    //TODO: When more Feature mode
   }
 
   TextEditingController startTimeController = TextEditingController();
@@ -175,252 +345,15 @@ class _AppointmentTileState extends State<AppointmentTile> {
                     ),
                   ],
                 ),
-                InkWell(
-                  onTap: () {
-                    if (Platform.isIOS) {
-                      HapticFeedback.lightImpact();
-                    }
-                    bool startTap = false;
-                    bool endTap = false;
-                    bool allDay = widget.appointment.isAllDay;
-                    DateTime startTime = widget.appointment.startTime;
-                    DateTime endTime = widget.appointment.endTime;
-                    showDialog(
-                      context: context,
-                      builder: (context) => StatefulBuilder(
-                        builder: (context, setState) => Dialog(
-                          child: Container(
-                            height: allDay
-                                ? 200
-                                : startTap || endTap
-                                    ? 550
-                                    : 350,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    const Text("All day"),
-                                    Checkbox(
-                                      activeColor:
-                                          Theme.of(context).primaryColor,
-                                      value: allDay,
-                                      onChanged: (val) {
-                                        if (Platform.isIOS) {
-                                          HapticFeedback.lightImpact();
-                                        }
-                                        allDay = !allDay;
-                                        setState(() {});
-                                      },
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    const Text("Repeat"),
-                                    Checkbox(
-                                      activeColor:
-                                          Theme.of(context).primaryColor,
-                                      value:
-                                          widget.appointment.recurrenceRule !=
-                                              null,
-                                      onChanged: (val) {},
-                                    ),
-                                  ],
-                                ),
-                                if (!allDay)
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 30.0),
-                                    child: Column(
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              "Start time",
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.only(top: 3),
-                                              height: 40,
-                                              width: double.maxFinite,
-                                              child: TextField(
-                                                style: const TextStyle(
-                                                    height: 0.75),
-                                                controller: startTimeController,
-                                                onTap: () {
-                                                  setState(() {
-                                                    startTap = true;
-                                                    endTap = false;
-                                                  });
-                                                },
-                                                readOnly: true,
-                                                decoration: InputDecoration(
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  focusedBorder:
-                                                      OutlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: Theme.of(context)
-                                                            .primaryColor),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 15, bottom: 0),
-                                          child: FaIcon(
-                                            FontAwesomeIcons.arrowDown,
-                                            color: Colors.grey,
-                                            size: 20,
-                                          ),
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              "End time",
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.only(top: 3),
-                                              height: 40,
-                                              width: double.maxFinite,
-                                              child: TextField(
-                                                style: const TextStyle(
-                                                    height: 0.75),
-                                                onTap: () {
-                                                  endTap = true;
-                                                  startTap = false;
-                                                  setState(() {});
-                                                },
-                                                controller: endTimeController,
-                                                readOnly: true,
-                                                decoration: InputDecoration(
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  focusedBorder:
-                                                      OutlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: Theme.of(context)
-                                                            .primaryColor),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                if ((startTap || endTap) && !allDay)
-                                  SizedBox(
-                                    height: 200,
-                                    width: double.maxFinite,
-                                    child: CupertinoDatePicker(
-                                      initialDateTime:
-                                          startTap ? startTime : endTime,
-                                      minimumDate: endTap ? startTime : null,
-                                      maximumDate: startTap ? endTime : null,
-                                      onDateTimeChanged: (date) {
-                                        if (startTap) {
-                                          startTimeController.text =
-                                              "${date.toString().split(' ')[0]}     ${getOnlyTime(date)}";
-                                          startTime = date;
-                                        }
-                                        if (endTap) {
-                                          endTimeController.text =
-                                              "${date.toString().split(' ')[0]}     ${getOnlyTime(date)}";
-                                          endTime = date;
-                                        }
-                                        setState(() {});
-                                      },
-                                      mode: CupertinoDatePickerMode.dateAndTime,
-                                    ),
-                                  ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    if (Platform.isIOS) {
-                                      HapticFeedback.lightImpact();
-                                    }
-                                    context
-                                        .read<DataSourceViewModel>()
-                                        .setAllDay(
-                                            appointment: widget.appointment,
-                                            value: allDay);
-                                    context
-                                        .read<DataSourceViewModel>()
-                                        .changeAppointmentTime(
-                                            appointment: widget.appointment,
-                                            startTime: startTime,
-                                            endTime: endTime,
-                                            isAllDay: allDay);
-                                    widget.setStateHome();
-                                    Navigator.pop(context);
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.black),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8, horizontal: 40),
-                                    child: const Text(
-                                      "Done",
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                  child: SizedBox(
-                    height: double.maxFinite,
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 15),
-                        child: Text(
-                          getTimeText(),
-                          textAlign: TextAlign.right,
-                          style: const TextStyle(fontSize: 12),
-                        ),
+                SizedBox(
+                  height: double.maxFinite,
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 15),
+                      child: Text(
+                        getTimeText(),
+                        textAlign: TextAlign.right,
+                        style: const TextStyle(fontSize: 12),
                       ),
                     ),
                   ),
@@ -438,12 +371,12 @@ class _AppointmentTileState extends State<AppointmentTile> {
       return 'all-day';
     } else if (getOnlyDate(widget.appointment.startTime) !=
         getOnlyDate(widget.appointment.endTime)) {
-      return "${getThreeCharDay(widget.appointment.startTime)} ${getOnlyTime(widget.appointment.startTime)} \n → ${getThreeCharDay(widget.appointment.endTime)} ${getOnlyTime(widget.appointment.endTime)}";
+      return "${getThreeCharDay(widget.appointment.startTime)} ${getOnlyTime(widget.appointment.startTime)} \n ${getThreeCharDay(widget.appointment.endTime)} ${getOnlyTime(widget.appointment.endTime)}";
     } else if (getOnlyTime(widget.appointment.startTime) ==
         getOnlyTime(widget.appointment.endTime)) {
       return getOnlyTime(widget.appointment.startTime);
     }
 
-    return "${getOnlyTime(widget.appointment.startTime)} \n → ${getOnlyTime(widget.appointment.endTime)}";
+    return "${getOnlyTime(widget.appointment.startTime)} \n ${getOnlyTime(widget.appointment.endTime)}";
   }
 }

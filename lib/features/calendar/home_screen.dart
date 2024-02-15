@@ -2,12 +2,14 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:lunar/calendar/Lunar.dart';
 import 'package:lunar/calendar/Solar.dart';
 import 'package:provider/provider.dart';
 import 'package:super_calendar/features/calendar/components/today_button.dart';
+import 'package:super_calendar/features/settings/settings_screen.dart';
 import 'package:super_calendar/features/settings/view_models/dark_mode_provider.dart';
 import 'package:super_calendar/features/settings/view_models/settings_items_vm.dart';
 import 'package:super_calendar/features/settings/view_models/more_feature_provider.dart';
@@ -396,63 +398,87 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             children: [
               Expanded(
-                child: SfCalendar(
-                  onLongPress: onLongPress,
-                  onViewChanged: onViewChanged,
-                  headerStyle: CalendarHeaderStyle(
-                    textStyle: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color:
-                            isDarkMode(context) ? Colors.white : Colors.black),
-                    textAlign: TextAlign.center,
-                  ),
-                  viewHeaderStyle: ViewHeaderStyle(
-                    dayTextStyle: TextStyle(
-                        color: isDarkMode(context)
-                            ? Colors.white70
-                            : Colors.black),
-                  ),
-                  controller: _calendarController,
-                  selectionDecoration:
-                      const BoxDecoration(color: Colors.transparent),
-                  view: CalendarView.month,
-                  cellBorderColor: Colors.transparent,
-                  monthViewSettings: MonthViewSettings(
-                    numberOfWeeksInView: weekNums[weekNumIndex],
-                    showTrailingAndLeadingDates: moreFeatures ? true : false,
-                    appointmentDisplayCount: showAgenda
-                        ? weekNumIndex == 0
-                            ? 10
-                            : weekNumIndex == 1
-                                ? 8
-                                : weekNumIndex == 2
-                                    ? 4
-                                    : 3
-                        : weekNumIndex == 0
-                            ? 14
-                            : weekNumIndex == 1
+                child: Stack(
+                  children: [
+                    SfCalendar(
+                      onLongPress: onLongPress,
+                      onViewChanged: onViewChanged,
+                      headerStyle: CalendarHeaderStyle(
+                        textStyle: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: isDarkMode(context)
+                                ? Colors.white
+                                : Colors.black),
+                        textAlign: TextAlign.center,
+                      ),
+                      viewHeaderStyle: ViewHeaderStyle(
+                        dayTextStyle: TextStyle(
+                            color: isDarkMode(context)
+                                ? Colors.white70
+                                : Colors.black),
+                      ),
+                      controller: _calendarController,
+                      selectionDecoration:
+                          const BoxDecoration(color: Colors.transparent),
+                      view: CalendarView.month,
+                      cellBorderColor: Colors.transparent,
+                      monthViewSettings: MonthViewSettings(
+                        numberOfWeeksInView: weekNums[weekNumIndex],
+                        showTrailingAndLeadingDates:
+                            moreFeatures ? true : false,
+                        appointmentDisplayCount: showAgenda
+                            ? weekNumIndex == 0
                                 ? 10
-                                : weekNumIndex == 2
-                                    ? 7
-                                    : 4,
-                    appointmentDisplayMode:
-                        context.read<SettingsItemViewModel>().eventViewIndex ==
+                                : weekNumIndex == 1
+                                    ? 8
+                                    : weekNumIndex == 2
+                                        ? 4
+                                        : 3
+                            : weekNumIndex == 0
+                                ? 14
+                                : weekNumIndex == 1
+                                    ? 10
+                                    : weekNumIndex == 2
+                                        ? 7
+                                        : 4,
+                        appointmentDisplayMode: context
+                                    .read<SettingsItemViewModel>()
+                                    .eventViewIndex ==
                                 0
                             ? MonthAppointmentDisplayMode.appointment
                             : MonthAppointmentDisplayMode.indicator,
-                  ),
-                  monthCellBuilder: (context, details) =>
-                      monthCellBuilder(context, details, moreFeatures),
-                  todayHighlightColor: moreFeatures
-                      ? Theme.of(context).primaryColor
-                      : isDarkMode(context)
-                          ? Colors.white70
-                          : Colors.black,
-                  onTap: onTap,
-                  dataSource: MeetingDataSource(
-                    context.watch<DataSourceViewModel>().dataSource,
-                  ),
+                      ),
+                      monthCellBuilder: (context, details) =>
+                          monthCellBuilder(context, details, moreFeatures),
+                      todayHighlightColor: moreFeatures
+                          ? Theme.of(context).primaryColor
+                          : isDarkMode(context)
+                              ? Colors.white70
+                              : Colors.black,
+                      onTap: onTap,
+                      dataSource: MeetingDataSource(
+                        context.watch<DataSourceViewModel>().dataSource,
+                      ),
+                    ),
+                    Positioned(
+                      right: 20,
+                      top: 8,
+                      child: GestureDetector(
+                        onTap: () {
+                          if (Platform.isIOS) {
+                            HapticFeedback.lightImpact();
+                          }
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SettingsScreen(),
+                              ));
+                        },
+                        child: const Icon(FontAwesomeIcons.gear),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               if (showAgenda) getAgenda(context),
@@ -541,7 +567,7 @@ class _HomeScreenState extends State<HomeScreen> {
           endIndent: 15,
         ),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.25,
+          height: MediaQuery.of(context).size.height * 0.3,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: ListView.builder(

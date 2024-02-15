@@ -39,58 +39,58 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen>
 
   @override
   Widget build(BuildContext context) {
-    bool moreFeature = context.watch<MoreFeatures>().moreFeatures;
+    //bool moreFeature = context.watch<MoreFeatures>().moreFeatures;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: screens[index],
-      bottomNavigationBar: BottomAppBar(
-        height: 50,
-        color: Colors.transparent,
-        shadowColor: Colors.transparent,
-        surfaceTintColor: Colors.transparent,
-        padding: const EdgeInsets.only(left: 20, right: 20, top: 0),
-        child: Container(
-          decoration: BoxDecoration(
-            color: isDarkMode(context) ? const Color(0xff121212) : Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 2,
-                blurRadius: 5,
-                offset: const Offset(0, 2),
-              ),
-            ],
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Expanded(
-                child: NavButton(
-                  icon: Iconsax.home,
-                  onTap: () => onNavTap(0),
-                  isSelected: index == 0,
-                ),
-              ),
-              if (moreFeature)
-                Expanded(
-                  child: NavButton(
-                    icon: Iconsax.tag,
-                    onTap: () => onNavTap(1),
-                    isSelected: index == 1,
-                  ),
-                ),
-              Expanded(
-                child: NavButton(
-                  icon: Iconsax.setting,
-                  onTap: () => onNavTap(2),
-                  isSelected: index == 2,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      // bottomNavigationBar: BottomAppBar(
+      //   height: 50,
+      //   color: Colors.transparent,
+      //   shadowColor: Colors.transparent,
+      //   surfaceTintColor: Colors.transparent,
+      //   padding: const EdgeInsets.only(left: 20, right: 20, top: 0),
+      //   child: Container(
+      //     decoration: BoxDecoration(
+      //       color: isDarkMode(context) ? const Color(0xff121212) : Colors.white,
+      //       boxShadow: [
+      //         BoxShadow(
+      //           color: Colors.grey.withOpacity(0.5),
+      //           spreadRadius: 2,
+      //           blurRadius: 5,
+      //           offset: const Offset(0, 2),
+      //         ),
+      //       ],
+      //       borderRadius: BorderRadius.circular(15),
+      //     ),
+      //     child: Row(
+      //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+      //       children: [
+      //         Expanded(
+      //           child: NavButton(
+      //             icon: Iconsax.home,
+      //             onTap: () => onNavTap(0),
+      //             isSelected: index == 0,
+      //           ),
+      //         ),
+      //         if (moreFeature)
+      //           Expanded(
+      //             child: NavButton(
+      //               icon: Iconsax.tag,
+      //               onTap: () => onNavTap(1),
+      //               isSelected: index == 1,
+      //             ),
+      //           ),
+      //         Expanded(
+      //           child: NavButton(
+      //             icon: Iconsax.setting,
+      //             onTap: () => onNavTap(2),
+      //             isSelected: index == 2,
+      //           ),
+      //         ),
+      //       ],
+      //     ),
+      //   ),
+      // ),
     );
   }
 }
