@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:super_calendar/features/settings/models/holiday_model.dart';
+import 'package:super_calendar/features/settings/services/get_holiday_service.dart';
 import 'package:super_calendar/features/settings/view_models/more_feature_provider.dart';
 import 'package:super_calendar/features/settings/view_models/dark_mode_provider.dart';
 import 'package:super_calendar/features/settings/view_models/settings_items_vm.dart';
@@ -221,6 +223,62 @@ class _SettingsScreenState extends State<SettingsScreen>
                 context.watch<SettingsItemViewModel>().eventViewIndex == 0
                     ? "list"
                     : "indicator",
+                style: const TextStyle(fontSize: 14),
+              ),
+            ),
+          ),
+          // Holiday
+          InkWell(
+            onTap: () async {
+              await showCupertinoModalPopup(
+                context: context,
+                builder: (context) => SizedBox(
+                  height: 300,
+                  child: CupertinoPicker(
+                    backgroundColor: Colors.white,
+                    squeeze: 1.2,
+                    magnification: 1.22,
+                    useMagnifier: true,
+                    itemExtent: 32.0,
+                    scrollController: FixedExtentScrollController(
+                        initialItem: context
+                            .watch<SettingsItemViewModel>()
+                            .holidayIndex),
+                    onSelectedItemChanged: (value) => context
+                        .read<SettingsItemViewModel>()
+                        .setHolidayIndex(value),
+                    children: countries.keys
+                        .map(
+                          (e) => Center(
+                            child: Text(e),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+              );
+              // Holiday api call  //
+              if (!mounted ||
+                  Provider.of<SettingsItemViewModel>(context, listen: false)
+                          .holidayIndex ==
+                      0) {
+                return;
+              }
+              List<HolidayModel> holidays = await GetHolidayService()
+                  .fetchHolidays(countries.values.toList()[
+                      Provider.of<SettingsItemViewModel>(context, listen: false)
+                          .holidayIndex]);
+              if (!mounted) return;
+              context
+                  .read<SettingsItemViewModel>()
+                  .addHolidays(holidays, context);
+              // ---------------- //
+            },
+            child: ListTile(
+              title: const Text("Holiday Country 🎁"),
+              trailing: Text(
+                countries.keys.toList()[
+                    context.watch<SettingsItemViewModel>().holidayIndex],
                 style: const TextStyle(fontSize: 14),
               ),
             ),

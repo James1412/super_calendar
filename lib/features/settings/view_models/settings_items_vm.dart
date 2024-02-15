@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:super_calendar/features/calendar/view_models/data_source_vm.dart';
+
+import '../models/holiday_model.dart';
 
 class SettingsItemViewModel extends ChangeNotifier {
+  // Lunar dates
   bool showLunarDate = false;
-
   void setShowLunarDate(bool value) {
     showLunarDate = value;
     notifyListeners();
@@ -27,6 +31,32 @@ class SettingsItemViewModel extends ChangeNotifier {
   Color primaryColor = Colors.orange;
   void changePrimaryColor(Color color) {
     primaryColor = color;
+    notifyListeners();
+  }
+
+  // Holiday
+  int holidayIndex = 0;
+  List<HolidayModel> holidays = [];
+  static String holidayText = "flutter-super-calendar-holiday";
+  void setHolidayIndex(int index) {
+    holidayIndex = index;
+    notifyListeners();
+  }
+
+  void addHolidays(List<HolidayModel> holidayModels, BuildContext context) {
+    holidays = holidayModels;
+    for (HolidayModel holiday in holidays) {
+      int year = int.parse(holiday.date.split('-')[0]);
+      int month = int.parse(holiday.date.split('-')[1]);
+      int day = int.parse(holiday.date.split('-')[2]);
+      context.read<DataSourceViewModel>().addQuickNewAppointment(
+            date: DateTime(year, month, day),
+            time: null,
+            text: holiday.holidayName,
+            context: context,
+            holiday: holidayText,
+          );
+    }
     notifyListeners();
   }
 

@@ -37,33 +37,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  Color? dateTextColor(DateTime datetime, bool moreFeatures, DateTime midDate) {
-    final bool isSaturday = datetime.weekday == 6;
-    final bool isSunday = datetime.weekday == 7;
-    final bool currentMonth = (datetime.month == midDate.month);
-    if (!moreFeatures) {
-      if (isSaturday) {
-        return Colors.blue;
-      } else if (isSunday) {
-        return Colors.red;
-      }
-      return isDarkMode(context) ? Colors.white : Colors.black;
-    } else {
-      if (currentMonth) {
-        if (isSaturday) {
-          return Colors.blue;
-        } else if (isSunday) {
-          return Colors.red;
-        }
-        return isDarkMode(context) ? Colors.white : Colors.black;
-      } else {
-        return isDarkMode(context)
-            ? Colors.grey.shade800
-            : Colors.grey.shade300;
-      }
-    }
-  }
-
   MonthCell monthCellBuilder(
       BuildContext context, MonthCellDetails details, bool moreFeatures) {
     int mid = details.visibleDates.length ~/ 2.toInt();
@@ -79,7 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
       isToday: isToday,
       isSelectedDate: isSelectedDate,
       details: details,
-      dateTextColor: dateTextColor,
       midDate: midDate,
       moreFeatures: moreFeatures,
       showAgenda: showAgenda,
@@ -191,7 +163,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 DateFormat.yMMMMd()
                     .format(calendarLongPressDetails.date!)
                     .toString(),
-                style: const TextStyle(fontWeight: FontWeight.w500),
+                style:
+                    const TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
               ),
             ],
           ),
@@ -354,9 +327,12 @@ class _HomeScreenState extends State<HomeScreen> {
     bool repeat = false;
     String? dropDownValue;
 
-    // TODO: not in feature rich mode
     await quickAddEvent(
-        calendarLongPressDetails, addTime, repeat, dropDownValue);
+      calendarLongPressDetails,
+      addTime,
+      repeat,
+      dropDownValue,
+    );
     // TODO: add here the feature rich mode
     selectedDate = calendarLongPressDetails.date!;
     if (!mounted) return;

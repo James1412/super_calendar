@@ -47,6 +47,7 @@ class DataSourceViewModel extends ChangeNotifier {
     required String text,
     required BuildContext context,
     String? repeat,
+    String? holiday,
   }) {
     bool isAllDay = false;
     DateTime? from = time;
@@ -57,12 +58,14 @@ class DataSourceViewModel extends ChangeNotifier {
       to = date;
     }
     final newEvent = Appointment(
-        subject: text,
-        startTime: from!,
-        endTime: to!,
-        color: Theme.of(context).primaryColor,
-        isAllDay: isAllDay,
-        recurrenceRule: repeat);
+      subject: text,
+      startTime: from!,
+      endTime: to!,
+      color: Theme.of(context).primaryColor,
+      isAllDay: isAllDay,
+      recurrenceRule: repeat,
+      notes: holiday,
+    );
     dataSource.add(newEvent);
     notifyListeners();
   }
