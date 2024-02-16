@@ -72,7 +72,6 @@ class _HomeScreenState extends State<HomeScreen> {
       isSelectedDate: isSelectedDate,
       details: details,
       midDate: midDate,
-      moreFeatures: moreFeatures,
       showAgenda: showAgenda,
     );
   }
@@ -420,8 +419,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       cellBorderColor: Colors.transparent,
                       monthViewSettings: MonthViewSettings(
                         numberOfWeeksInView: weekNums[weekNumIndex],
-                        showTrailingAndLeadingDates:
-                            moreFeatures ? true : false,
+                        showTrailingAndLeadingDates: context
+                                .watch<SettingsItemViewModel>()
+                                .showLeadingAndTrailingDates
+                            ? true
+                            : false,
                         appointmentDisplayCount: showAgenda
                             ? weekNumIndex == 0
                                 ? 10

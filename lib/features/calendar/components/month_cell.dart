@@ -11,7 +11,6 @@ class MonthCell extends StatelessWidget {
   final bool isToday;
   final bool isSelectedDate;
   final MonthCellDetails details;
-  final bool moreFeatures;
   final bool showAgenda;
   final DateTime midDate;
   const MonthCell(
@@ -20,11 +19,10 @@ class MonthCell extends StatelessWidget {
       required this.isToday,
       required this.isSelectedDate,
       required this.details,
-      required this.moreFeatures,
       required this.showAgenda});
 
-  Color? dateTextColor(DateTime datetime, bool moreFeatures, DateTime midDate,
-      BuildContext context) {
+  Color? dateTextColor(
+      DateTime datetime, DateTime midDate, BuildContext context) {
     final bool isSaturday = datetime.weekday == 6;
     final bool isSunday = datetime.weekday == 7;
     final bool currentMonth = (datetime.month == midDate.month);
@@ -37,7 +35,7 @@ class MonthCell extends StatelessWidget {
         return Colors.red;
       }
     }
-    if (!moreFeatures) {
+    if (!context.watch<SettingsItemViewModel>().showLeadingAndTrailingDates) {
       if (isSaturday) {
         return Colors.blue;
       } else if (isSunday) {
@@ -88,8 +86,7 @@ class MonthCell extends StatelessWidget {
                 fontWeight: FontWeight.w900,
                 color: isToday
                     ? Colors.white
-                    : dateTextColor(
-                        details.date, moreFeatures, midDate, context),
+                    : dateTextColor(details.date, midDate, context),
               ),
             ),
           ),

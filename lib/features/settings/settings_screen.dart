@@ -90,6 +90,9 @@ class _SettingsScreenState extends State<SettingsScreen>
                     });
                   } else {
                     context.read<SettingsItemViewModel>().weekNumIndex = 3;
+                    context
+                        .read<SettingsItemViewModel>()
+                        .setShowLeadingTrailingDates(false);
                     setState(() {
                       animateMuscle = false;
                     });
@@ -99,62 +102,83 @@ class _SettingsScreenState extends State<SettingsScreen>
             ),
           ),
           if (moreFeature)
-            InkWell(
-              onTap: () {
-                showCupertinoModalPopup(
-                  context: context,
-                  builder: (context) => SizedBox(
-                    height: 216,
-                    child: CupertinoPicker(
-                      backgroundColor: Colors.white,
-                      squeeze: 1.2,
-                      magnification: 1.22,
-                      useMagnifier: true,
-                      itemExtent: 32.0,
-                      scrollController: FixedExtentScrollController(
-                          initialItem: context
-                              .watch<SettingsItemViewModel>()
-                              .weekNumIndex),
-                      onSelectedItemChanged: (value) {
-                        setState(() {
-                          context
-                              .read<SettingsItemViewModel>()
-                              .setWeekNum(value);
-                        });
-                      },
-                      children: [
-                        for (int i = 0;
-                            i <
-                                context
-                                    .watch<SettingsItemViewModel>()
-                                    .indexAndWeekNumList
-                                    .length;
-                            i++)
-                          Center(
-                            child: Text(
-                              context
+            Column(
+              children: [
+                InkWell(
+                  onTap: () {
+                    showCupertinoModalPopup(
+                      context: context,
+                      builder: (context) => SizedBox(
+                        height: 216,
+                        child: CupertinoPicker(
+                          backgroundColor: Colors.white,
+                          squeeze: 1.2,
+                          magnification: 1.22,
+                          useMagnifier: true,
+                          itemExtent: 32.0,
+                          scrollController: FixedExtentScrollController(
+                              initialItem: context
                                   .watch<SettingsItemViewModel>()
-                                  .indexAndWeekNumList[i]
-                                  .toString(),
-                              style: const TextStyle(color: Colors.black),
-                            ),
-                          ),
-                      ],
+                                  .weekNumIndex),
+                          onSelectedItemChanged: (value) {
+                            setState(() {
+                              context
+                                  .read<SettingsItemViewModel>()
+                                  .setWeekNum(value);
+                            });
+                          },
+                          children: [
+                            for (int i = 0;
+                                i <
+                                    context
+                                        .watch<SettingsItemViewModel>()
+                                        .indexAndWeekNumList
+                                        .length;
+                                i++)
+                              Center(
+                                child: Text(
+                                  context
+                                      .watch<SettingsItemViewModel>()
+                                      .indexAndWeekNumList[i]
+                                      .toString(),
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  child: ListTile(
+                    title: const Text("Number of weeks"),
+                    trailing: Text(
+                      context
+                          .watch<SettingsItemViewModel>()
+                          .indexAndWeekNumList[context
+                              .watch<SettingsItemViewModel>()
+                              .weekNumIndex]
+                          .toString(),
+                      style: const TextStyle(fontSize: 14),
                     ),
                   ),
-                );
-              },
-              child: ListTile(
-                title: const Text("Number of weeks"),
-                trailing: Text(
-                  context
-                      .watch<SettingsItemViewModel>()
-                      .indexAndWeekNumList[
-                          context.watch<SettingsItemViewModel>().weekNumIndex]
-                      .toString(),
-                  style: const TextStyle(fontSize: 14),
                 ),
-              ),
+                SwitchListTile(
+                  activeColor: Theme.of(context).primaryColor,
+                  inactiveThumbColor: Colors.grey,
+                  inactiveTrackColor: Colors.grey.shade300,
+                  trackOutlineColor:
+                      MaterialStateProperty.all(Colors.transparent),
+                  value: context
+                      .watch<SettingsItemViewModel>()
+                      .showLeadingAndTrailingDates,
+                  onChanged: (value) {
+                    context
+                        .read<SettingsItemViewModel>()
+                        .setShowLeadingTrailingDates(value);
+                  },
+                  title: const Text("Show leading and trailing dates 😶‍🌫️"),
+                ),
+              ],
             ),
           InkWell(
             onTap: () async {
@@ -318,6 +342,7 @@ class _SettingsScreenState extends State<SettingsScreen>
             },
             title: const Text("Show Lunar Calendar 📅"),
           ),
+
           InkWell(
             onTap: () {},
             child: const ListTile(

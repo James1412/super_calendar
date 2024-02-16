@@ -5,6 +5,13 @@ import 'package:super_calendar/features/calendar/view_models/data_source_vm.dart
 import '../models/holiday_model.dart';
 
 class SettingsItemViewModel extends ChangeNotifier {
+  // leading and trailing dates
+  bool showLeadingAndTrailingDates = false;
+  void setShowLeadingTrailingDates(bool value) {
+    showLeadingAndTrailingDates = value;
+    notifyListeners();
+  }
+
   // Lunar dates
   bool showLunarDate = false;
   void setShowLunarDate(bool value) {
@@ -36,7 +43,6 @@ class SettingsItemViewModel extends ChangeNotifier {
 
   // Holiday
   int holidayIndex = 0;
-
   static String holidayText = "flutter-super-calendar-holiday";
   void setHolidayIndex(int index) {
     holidayIndex = index;
